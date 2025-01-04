@@ -15,7 +15,7 @@ object ResidenceFlagChange : Listener {
     // Flags 被修改 前 时才会触发
     // 同时 ResidenceCreation 也会触发，因为创建领地时同时在初始化 Flags
     // 但领地没创建完之前，获取的 residenceName 都是 null
-    @EventHandler(priority = EventPriority.NORMAL)
+    @EventHandler
     fun onResidenceFlagChange(event: ResidenceFlagChangeEvent) {
 
 //        Bukkit.broadcastMessage("触发 onResidenceFlagChange")

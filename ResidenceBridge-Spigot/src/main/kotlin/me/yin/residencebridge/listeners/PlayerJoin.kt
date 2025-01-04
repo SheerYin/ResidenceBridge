@@ -7,7 +7,7 @@ import org.bukkit.event.player.PlayerJoinEvent
 
 object PlayerJoin : Listener {
 
-    @EventHandler(priority = EventPriority.NORMAL)
+    @EventHandler
     fun onPlayerJoin(event: PlayerJoinEvent) {
         val player = event.player
 

@@ -12,7 +12,7 @@ import org.bukkit.event.Listener
 object ResidenceCreation : Listener {
 
     // 领地创建 前 触发
-    @EventHandler(priority = EventPriority.NORMAL)
+    @EventHandler
     fun onResidenceCreation(event: ResidenceCreationEvent) {
 
 //        Bukkit.broadcastMessage("触发 onResidenceCreation")

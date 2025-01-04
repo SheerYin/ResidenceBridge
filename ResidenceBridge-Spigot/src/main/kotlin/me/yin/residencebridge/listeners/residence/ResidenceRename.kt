@@ -11,7 +11,7 @@ import org.bukkit.event.Listener
 object ResidenceRename : Listener {
 
     // 领地被更改名称 前 时才会触发
-    @EventHandler(priority = EventPriority.NORMAL)
+    @EventHandler
     fun onResidenceRename(event: ResidenceRenameEvent) {
 
 //        Bukkit.broadcastMessage("触发 onResidenceRename")

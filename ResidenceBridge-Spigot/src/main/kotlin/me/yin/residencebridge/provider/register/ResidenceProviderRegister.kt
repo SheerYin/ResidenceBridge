@@ -2,7 +2,7 @@ package me.yin.residencebridge.provider.register
 
 import com.bekvon.bukkit.residence.Residence
 
-object ResidenceProvider {
+object ResidenceProviderRegister {
 
     val residence: Residence = Residence.getInstance()
 

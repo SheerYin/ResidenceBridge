@@ -11,7 +11,7 @@ import org.bukkit.event.Listener
 object ResidenceDelete : Listener {
 
     // 领地被删除 前 时才会触发
-    @EventHandler(priority = EventPriority.NORMAL)
+    @EventHandler
     fun onResidenceDelete(event: ResidenceDeleteEvent) {
         val residenceName = event.residence.residenceName
 

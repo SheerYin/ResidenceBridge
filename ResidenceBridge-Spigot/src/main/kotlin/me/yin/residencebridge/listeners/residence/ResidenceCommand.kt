@@ -1,8 +1,9 @@
 package me.yin.residencebridge.listeners.residence
 
 import com.bekvon.bukkit.residence.event.ResidenceCommandEvent
+import kotlinx.coroutines.launch
 import me.yin.residencebridge.ResidenceBridge
-import me.yin.residencebridge.provider.register.ResidenceProvider
+import me.yin.residencebridge.provider.register.ResidenceProviderRegister
 import me.yin.residencebridge.service.ResidenceTeleport
 import me.yin.residencebridge.storage.ResidenceStorage
 import org.bukkit.entity.Player
@@ -21,20 +22,34 @@ object ResidenceCommand : Listener {
 
         if (command in listOf("residence", "res")) {
             when (arguments.size) {
+                1 -> {
+                    if (arguments[0] == "list") {
+                        event.isCancelled = true
+
+                        ResidenceBridge.scope.launch {
+                            val residenceInfos = ResidenceStorage.selectOwnerResidences(player.uniqueId)
+                            player.sendMessage("${ResidenceBridge.pluginPrefix} 玩家 §2${player.name}§f 领地列表")
+                            for (residenceInfo in residenceInfos) {
+                                player.sendMessage("${ResidenceBridge.pluginPrefix} 领地 ${residenceInfo.residenceName} 位于 ${residenceInfo.serverName}")
+                            }
+                        }
+                    }
+                }
                 2 -> {
                     when {
                         arguments[0].lowercase() == "tp" -> {
                             val residenceName = arguments[1]
-                            if (ResidenceProvider.residence.residenceManager.getByName(residenceName) != null) {
+                            if (ResidenceProviderRegister.residence.residenceManager.getByName(residenceName) != null) {
                                 return // 本地存在领地
                             }
+                            event.isCancelled = true
+
                             val serverName = ResidenceStorage.selectResidenceServerName(residenceName)
                             if (serverName == null) {
-                                // player.sendMessage(ResidenceBridge.pluginPrefix + " 领地或服务器不存在")
+                                player.sendMessage(ResidenceBridge.pluginPrefix + " 领地或服务器不存在")
                                 return
                             }
-                            event.isCancelled = true
-                            ResidenceTeleport.teleport(player, arguments[1], serverName)
+                            ResidenceTeleport.global(player, arguments[1], serverName)
                             player.sendMessage(ResidenceBridge.pluginPrefix + " 开始传送")
                         }
 
@@ -56,7 +71,7 @@ object ResidenceCommand : Listener {
         }
     }
 
-//    @EventHandler(priority = EventPriority.NORMAL)
+//    @EventHandler
 //    fun onResidenceCommand(event: ResidenceCommandEvent) {
 //
 ////        Bukkit.broadcastMessage("触发 onResidenceCommand")

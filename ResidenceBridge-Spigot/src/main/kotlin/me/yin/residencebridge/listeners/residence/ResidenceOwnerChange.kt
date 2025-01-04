@@ -12,7 +12,7 @@ import java.util.*
 object ResidenceOwnerChange : Listener {
 
     // 领地被更改所有者 前 时才会触发
-    @EventHandler(priority = EventPriority.NORMAL)
+    @EventHandler
     fun onResidenceOwnerChange(event: ResidenceOwnerChangeEvent) {
 
 //        Bukkit.broadcastMessage("触发 onResidenceOwnerChange")

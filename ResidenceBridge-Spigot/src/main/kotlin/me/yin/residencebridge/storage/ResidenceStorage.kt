@@ -124,7 +124,7 @@ object ResidenceStorage {
     }
 
     fun selectResidence(residenceName: String): ResidenceInfo? {
-        val sql = "SELECT * FROM $table WHERE residence_name = ? LIMIT 1"
+        val sql = "SELECT residence_name, owner_uuid, owner_name, residence_flags, player_flags, server_name FROM $table WHERE residence_name = ? LIMIT 1"
         getConnection().use { connection: Connection ->
             connection.prepareStatement(sql).use { preparedStatement ->
                 preparedStatement.setString(1, residenceName)
@@ -148,7 +148,7 @@ object ResidenceStorage {
     fun selectResidences(): List<ResidenceInfo> {
         val list: MutableList<ResidenceInfo> = arrayListOf()
 
-        val sql = "SELECT * FROM $table"
+        val sql = "SELECT residence_name, owner_uuid, owner_name, residence_flags, player_flags, server_name FROM $table"
         getConnection().use { connection: Connection ->
             connection.createStatement().use { statement ->
                 statement.executeQuery(sql).use { resultSet ->

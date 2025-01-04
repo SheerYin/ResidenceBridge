@@ -1,7 +1,8 @@
 package me.yin.residencebridge.listeners
 
 import me.yin.residencebridge.ResidenceBridge
-import me.yin.residencebridge.provider.register.ResidenceProvider
+import me.yin.residencebridge.provider.register.ResidenceProviderRegister
+import me.yin.residencebridge.service.ResidenceTeleport
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.plugin.messaging.PluginMessageListener
@@ -18,7 +19,7 @@ object ReceivePluginMessage : PluginMessageListener {
 
         DataInputStream(ByteArrayInputStream(message)).use { input ->
             val action = input.readUTF()
-            if (action != ("teleport")) {
+            if (action != "teleport") {
                 return
             }
 
@@ -27,20 +28,19 @@ object ReceivePluginMessage : PluginMessageListener {
 
             val target = ResidenceBridge.bukkitServer.getPlayerExact(playerName)
             if (target == null) {
-                // ResidenceBridge.broadcastPrefix("找不到玩家 $playerName")
+                //
                 return
             }
 
-            val claimedResidence = ResidenceProvider.residence.residenceManager.getByName(residenceName)
-            if (claimedResidence == null) {
-                // ResidenceBridge.broadcastPrefix("找不到领地 $residenceName")
-                return
+            val claimedResidence = ResidenceProviderRegister.residence.residenceManager.getByName(residenceName)
+            if (claimedResidence != null) {
+                ResidenceTeleport.local(player, claimedResidence)
+                return // 本地存在领地
             }
-            target.teleport(claimedResidence.getTeleportLocation(target, true))
         }
     }
 
-//    @EventHandler(priority = EventPriority.NORMAL)
+//    @EventHandler
 //    override fun onPluginMessageReceived(channel: String, player: Player, message: ByteArray) {
 //        if (channel != ResidenceStorage.pluginChannel) {
 //            return
