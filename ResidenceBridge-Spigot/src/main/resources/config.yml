@@ -1,0 +1,6 @@
+server-name: ''
+auto-import: true
+
+residence:
+  file:
+    path: ''

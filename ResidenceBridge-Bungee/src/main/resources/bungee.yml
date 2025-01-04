@@ -1,0 +1,5 @@
+name: ${rootName}
+main: ${group}.${rootName}
+version: "${pluginVersion}"
+author: "${pluginAuthor}"
+libraries: ${pluginLibraries}
