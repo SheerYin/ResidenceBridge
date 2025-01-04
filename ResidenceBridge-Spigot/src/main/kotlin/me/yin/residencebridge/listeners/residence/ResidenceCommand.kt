@@ -35,6 +35,7 @@ object ResidenceCommand : Listener {
                         }
                     }
                 }
+
                 2 -> {
                     when {
                         arguments[0].lowercase() == "tp" -> {

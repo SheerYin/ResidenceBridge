@@ -7,7 +7,6 @@ import kotlinx.coroutines.launch
 import me.yin.residencebridge.ResidenceBridge
 import me.yin.residencebridge.storage.ResidenceStorage
 import org.bukkit.event.EventHandler
-import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 
 object ResidenceFlagChange : Listener {

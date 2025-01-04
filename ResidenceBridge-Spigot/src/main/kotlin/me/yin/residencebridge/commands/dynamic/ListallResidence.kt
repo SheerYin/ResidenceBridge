@@ -5,7 +5,6 @@ import me.yin.residencebridge.ResidenceBridge
 import me.yin.residencebridge.commands.DynamicTabExecutor
 import me.yin.residencebridge.storage.ResidenceStorage
 import org.bukkit.command.CommandSender
-import org.bukkit.entity.Player
 
 object ListallResidence {
 

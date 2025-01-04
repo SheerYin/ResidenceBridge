@@ -20,11 +20,13 @@ object DynamicTabExecutor : TabExecutor {
             arguments.isEmpty() -> {
                 Help.dynamic(sender, mainPermission)
             }
+
             arguments.size == 1 -> {
                 when {
                     arguments[0] == "help" -> {
                         Help.dynamic(sender, mainPermission)
                     }
+
                     arguments[0] == "list" -> {
                         val player = sender as? Player
                         if (player == null) {
@@ -33,26 +35,29 @@ object DynamicTabExecutor : TabExecutor {
                         }
                         ListResidence.dynamic(player, mainPermission)
                     }
+
                     arguments[0] == "listall" -> {
                         ListallResidence.dynamic(sender, mainPermission)
                     }
+
                     arguments[0] == "import" -> {
                         ImportResidence.dynamic(sender, mainPermission)
                     }
                 }
             }
+
             arguments.size == 2 -> {
                 if (arguments[0] == "list") {
                     ListResidence.dynamic(sender, arguments[1], mainPermission)
                 } else
-                if (arguments[0] == "teleport") {
-                    val player = sender as? Player
-                    if (player == null) {
-                        sender.sendMessage(ResidenceBridge.pluginPrefix + " 此命令仅限玩家执行")
-                        return true
+                    if (arguments[0] == "teleport") {
+                        val player = sender as? Player
+                        if (player == null) {
+                            sender.sendMessage(ResidenceBridge.pluginPrefix + " 此命令仅限玩家执行")
+                            return true
+                        }
+                        Teleport.dynamic(player, mainPermission, arguments[1])
                     }
-                    Teleport.dynamic(player, mainPermission, arguments[1])
-                }
             }
         }
         return true
@@ -63,6 +68,7 @@ object DynamicTabExecutor : TabExecutor {
             1 -> {
                 return prune(arguments[0], "help", "list", "listall", "teleport", "import")
             }
+
             2 -> {
                 if (arguments[0] == "list") {
                     val s = arguments[1]
@@ -70,11 +76,11 @@ object DynamicTabExecutor : TabExecutor {
                         player.name.takeIf { arguments.isEmpty() || it.startsWith(s, ignoreCase = true) }
                     }
                 } else
-                if (arguments[0] == "teleport") {
-                    val player = sender as? Player ?: return emptyList()
-                    val names = ResidenceStorage.selectOwnerResidenceNames(player.uniqueId)
-                    return prune(arguments[1], names)
-                }
+                    if (arguments[0] == "teleport") {
+                        val player = sender as? Player ?: return emptyList()
+                        val names = ResidenceStorage.selectOwnerResidenceNames(player.uniqueId)
+                        return prune(arguments[1], names)
+                    }
             }
         }
         return emptyList()
@@ -103,8 +109,6 @@ object DynamicTabExecutor : TabExecutor {
         sender.sendMessage("${ResidenceBridge.pluginPrefix} 您没有权限 $permission")
         return false
     }
-
-
 
 
 }
