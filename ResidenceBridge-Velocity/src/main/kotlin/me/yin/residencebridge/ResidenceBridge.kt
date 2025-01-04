@@ -19,6 +19,7 @@ import java.io.ByteArrayOutputStream
 import java.io.DataInputStream
 import java.io.DataOutputStream
 import java.nio.file.Path
+import java.util.concurrent.TimeUnit
 
 class ResidenceBridge @Inject constructor(val proxy: ProxyServer, @DataDirectory val dataDirectory: Path, val pluginContainer: PluginContainer) {
 
@@ -111,7 +112,9 @@ class ResidenceBridge @Inject constructor(val proxy: ProxyServer, @DataDirectory
                 output.writeUTF(residenceName)
             }
 
-            registeredServer.sendPluginMessage(pluginChannel, byteArrayOutputStream.toByteArray())
+            proxyServer.scheduler.buildTask(this, Runnable {
+                registeredServer.sendPluginMessage(pluginChannel, byteArrayOutputStream.toByteArray())
+            }).delay(1000L, TimeUnit.MILLISECONDS).schedule()
         }
 
     }

@@ -26,10 +26,12 @@ object ImportResidence {
             val serverName = ResidenceBridge.serverName
             val residenceInfos = mutableListOf<ResidenceInfo>()
             for ((key, claimedResidence) in map) {
-                localNames.add(claimedResidence.residenceName)
+                // key 是小写
+                val residenceName = claimedResidence.residenceName
+                localNames.add(residenceName)
                 residenceInfos.add(
                     ResidenceInfo(
-                        claimedResidence.residenceName,
+                        residenceName,
                         claimedResidence.ownerUUID,
                         claimedResidence.owner,
                         claimedResidence.permissions.flags,

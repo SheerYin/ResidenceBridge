@@ -24,13 +24,17 @@ object Teleport {
         }
 
         ResidenceBridge.scope.launch {
-            val serverName = ResidenceStorage.selectResidenceServerName(residenceName)
-            if (serverName == null) {
-                player.sendMessage(ResidenceBridge.pluginPrefix + " 领地或服务器不存在")
+            val residenceInfo = ResidenceStorage.selectResidence(residenceName)
+            if (residenceInfo == null) {
+                player.sendMessage("${ResidenceBridge.pluginPrefix} 领地不存在")
                 return@launch
             }
-            ResidenceTeleport.global(player, residenceName)
-            player.sendMessage(ResidenceBridge.pluginPrefix + " 开始传送")
+            if (player.hasPermission("residence.admin.tp") || residenceInfo.ownerUUID == player.uniqueId || residenceInfo.residenceFlags["tp"] == true || residenceInfo.playerFlags[player.uniqueId.toString()]?.get("tp") == true) {
+                ResidenceTeleport.global(player, residenceName, residenceInfo.serverName)
+                player.sendMessage("${ResidenceBridge.pluginPrefix} 开始传送")
+            } else {
+                player.sendMessage("${ResidenceBridge.pluginPrefix} 你没有权限传送这个领地")
+            }
         }
     }
 

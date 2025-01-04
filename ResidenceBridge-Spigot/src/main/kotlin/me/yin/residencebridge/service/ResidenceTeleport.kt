@@ -12,7 +12,7 @@ object ResidenceTeleport {
         player.teleport(claimedResidence.getTeleportLocation(player, true))
     }
 
-    fun global(player: Player, residenceName: String, serverName: String = ResidenceBridge.serverName) {
+    fun global(player: Player, residenceName: String, serverName: String) {
         val byteArrayOutputStream = ByteArrayOutputStream()
         DataOutputStream(byteArrayOutputStream).use { output ->
             output.writeUTF("teleport")

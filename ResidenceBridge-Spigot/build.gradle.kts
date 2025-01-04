@@ -43,7 +43,7 @@ bukkitPluginYaml {
     main = "${project.group}.${rootName}"
     authors.add("尹")
     depend.add("Residence")
-    softDepend.add("PlaceholderAPI")
+    // softDepend.add("PlaceholderAPI")
     prefix = "领地桥接"
     libraries = listOf(
         "org.jetbrains.kotlin:kotlin-stdlib:2.1.0",

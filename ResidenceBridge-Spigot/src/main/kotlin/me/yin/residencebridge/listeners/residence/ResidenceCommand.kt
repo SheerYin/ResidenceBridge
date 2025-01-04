@@ -45,18 +45,32 @@ object ResidenceCommand : Listener {
                             }
                             event.isCancelled = true
 
-                            val serverName = ResidenceStorage.selectResidenceServerName(residenceName)
-                            if (serverName == null) {
-                                player.sendMessage(ResidenceBridge.pluginPrefix + " 领地或服务器不存在")
-                                return
+                            ResidenceBridge.scope.launch {
+                                val residenceInfo = ResidenceStorage.selectResidence(residenceName)
+                                if (residenceInfo == null) {
+                                    player.sendMessage("${ResidenceBridge.pluginPrefix} 领地不存在")
+                                    return@launch
+                                }
+                                if (player.hasPermission("residence.admin.tp") || residenceInfo.ownerUUID == player.uniqueId || residenceInfo.residenceFlags["tp"] == true || residenceInfo.playerFlags[player.uniqueId.toString()]?.get("tp") == true) {
+                                    ResidenceTeleport.global(player, residenceName, residenceInfo.serverName)
+                                    player.sendMessage("${ResidenceBridge.pluginPrefix} 开始传送")
+                                } else {
+                                    player.sendMessage("${ResidenceBridge.pluginPrefix} 你没有权限传送这个领地")
+                                }
                             }
-                            ResidenceTeleport.global(player, arguments[1], serverName)
-                            player.sendMessage(ResidenceBridge.pluginPrefix + " 开始传送")
                         }
 
                         arguments[0].lowercase() == "create" -> {
                             if (ResidenceStorage.isResidenceExists(arguments[1])) {
+                                player.sendMessage("${ResidenceBridge.pluginPrefix} 领地重名")
                                 event.isCancelled = true
+                            } else {
+                                val maximum = ResidenceProviderRegister.residence.playerManager.getMaxResidences(player.name)
+                                val count = ResidenceStorage.selectOwnerResidencesCount(player.uniqueId)
+                                if (count >= maximum) {
+                                    player.sendMessage("${ResidenceBridge.pluginPrefix} 创建领地已达上限 $count / $maximum")
+                                    event.isCancelled = true
+                                }
                             }
                         }
                     }
@@ -66,6 +80,7 @@ object ResidenceCommand : Listener {
             // 防管理员
             if (arguments.size == 2 && arguments[0] == "create") {
                 if (ResidenceStorage.isResidenceExists(arguments[1])) {
+                    player.sendMessage("${ResidenceBridge.pluginPrefix} 领地重名")
                     event.isCancelled = true
                 }
             }

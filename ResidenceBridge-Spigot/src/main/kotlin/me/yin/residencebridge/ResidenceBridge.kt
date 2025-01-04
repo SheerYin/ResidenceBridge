@@ -89,12 +89,12 @@ class ResidenceBridge : JavaPlugin() {
             onDisable()
         }
 
-        if (server.pluginManager.getPlugin("PlaceholderAPI") == null) {
-            server.consoleSender.sendMessage("$pluginPrefix 没有找到 PlaceholderAPI 无法提供解析 PlaceholderAPI 变量")
-            onDisable()
-        } else {
-            // ResidenceBridgeExpansion(this).register()
-        }
+//        if (server.pluginManager.getPlugin("PlaceholderAPI") == null) {
+//            server.consoleSender.sendMessage("$pluginPrefix 没有找到 PlaceholderAPI 无法提供解析 PlaceholderAPI 变量")
+//            onDisable()
+//        } else {
+//            ResidenceBridgeExpansion(this).register()
+//        }
     }
 
     override fun onDisable() {

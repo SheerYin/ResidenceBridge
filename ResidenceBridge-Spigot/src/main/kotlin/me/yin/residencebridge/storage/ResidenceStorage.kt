@@ -205,7 +205,6 @@ object ResidenceStorage {
         return list
     }
 
-
     fun selectOwnerResidenceNames(ownerName: String): List<String> {
         val list: MutableList<String> = arrayListOf()
 
@@ -222,7 +221,6 @@ object ResidenceStorage {
         }
         return list
     }
-
 
     fun selectOwnerResidences(ownerUUID: UUID): List<ResidenceInfo> {
         val list: MutableList<ResidenceInfo> = arrayListOf()
@@ -288,6 +286,38 @@ object ResidenceStorage {
             }
         }
         return null
+    }
+
+    fun selectOwnerResidencesCount(ownerName: String): Int {
+        var count = 0 // 初始化数量为0
+        val sql = "SELECT COUNT(*) AS residence_count FROM $table WHERE owner_name = ?"
+        getConnection().use { connection ->
+            connection.prepareStatement(sql).use { preparedStatement ->
+                preparedStatement.setString(1, ownerName)
+                preparedStatement.executeQuery().use { resultSet ->
+                    if (resultSet.next()) {
+                        count = resultSet.getInt("residence_count")
+                    }
+                }
+            }
+        }
+        return count
+    }
+
+    fun selectOwnerResidencesCount(ownerUUID: UUID): Int {
+        var count = 0 // 初始化数量为0
+        val sql = "SELECT COUNT(*) AS residence_count FROM $table WHERE owner_uuid = ?"
+        getConnection().use { connection ->
+            connection.prepareStatement(sql).use { preparedStatement ->
+                preparedStatement.setString(1, ownerUUID.toString())
+                preparedStatement.executeQuery().use { resultSet ->
+                    if (resultSet.next()) {
+                        count = resultSet.getInt("residence_count")
+                    }
+                }
+            }
+        }
+        return count
     }
 
     fun isResidenceExists(residenceName: String): Boolean {
