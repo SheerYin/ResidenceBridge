@@ -16,18 +16,11 @@ object ListResidence {
             return
         }
 
-
-//        val names = ResidenceStorage.selectOwnerResidenceNames(player.uniqueId)
-//        player.sendMessage(ResidenceBridge.pluginPrefix + " 领地列表")
-//        for (name in names) {
-//            player.sendMessage(ResidenceBridge.pluginPrefix + " " + name)
-//        }
-
         ResidenceBridge.scope.launch {
-            val residenceInfos = ResidenceStorage.selectOwnerResidences(player.uniqueId)
+            val names = ResidenceStorage.selectOwnerResidenceNames(player.uniqueId)
             player.sendMessage("${ResidenceBridge.pluginPrefix} 玩家 §2${player.name}§f 领地列表")
-            for (residenceInfo in residenceInfos) {
-                player.sendMessage("${ResidenceBridge.pluginPrefix} 领地 ${residenceInfo.residenceName} 位于 ${residenceInfo.serverName}")
+            for (name in names) {
+                player.sendMessage("${ResidenceBridge.pluginPrefix} 领地 $name")
             }
         }
 
