@@ -113,7 +113,7 @@ class ResidenceBridge : JavaPlugin() {
             }
         }
 
-        ResidenceStorage.close()
+        ResidenceStorage.dataSource.close()
     }
 
 
