@@ -74,9 +74,12 @@ bukkitPluginYaml {
         register("${label}.teleport") {
             default = Permission.Default.OP
         }
-        register("${label}.reload") {
+        register("${label}.import") {
             default = Permission.Default.OP
         }
+//        register("${label}.reload") {
+//            default = Permission.Default.OP
+//        }
     }
 }
 

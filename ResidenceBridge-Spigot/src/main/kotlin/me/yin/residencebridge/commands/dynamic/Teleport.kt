@@ -17,13 +17,13 @@ object Teleport {
             return
         }
 
-        val claimedResidence = ResidenceProviderRegister.residence.residenceManager.getByName(residenceName)
-        if (claimedResidence != null) {
-            ResidenceTeleport.local(player, claimedResidence)
-            return // 本地存在领地
-        }
-
         ResidenceBridge.scope.launch {
+            val claimedResidence = ResidenceProviderRegister.residence.residenceManager.getByName(residenceName)
+            if (claimedResidence != null) {
+                ResidenceTeleport.local(player, claimedResidence)
+                return@launch // 本地存在领地
+            }
+
             val residenceInfo = ResidenceStorage.selectResidence(residenceName)
             if (residenceInfo == null) {
                 player.sendMessage("${ResidenceBridge.pluginPrefix} 领地不存在")

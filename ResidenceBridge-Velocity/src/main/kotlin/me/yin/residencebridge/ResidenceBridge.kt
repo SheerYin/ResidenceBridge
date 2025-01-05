@@ -100,7 +100,7 @@ class ResidenceBridge @Inject constructor(val proxy: ProxyServer, @DataDirectory
 
             val registeredServer = proxy.getServer(serverName).orElse(null)
             if (registeredServer == null) {
-                proxy.sendMessage(getPrefixComponent().append(Component.text(" 服务器不存在")).build())
+                proxy.sendMessage(getPrefixComponent().append(Component.text(" $serverName 服务器不存在")).build())
                 return
             }
             player.createConnectionRequest(registeredServer).fireAndForget()

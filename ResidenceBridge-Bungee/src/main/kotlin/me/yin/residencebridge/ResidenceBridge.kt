@@ -89,7 +89,7 @@ class ResidenceBridge : Plugin(), Listener {
 
             val serverInfo = proxy.getServerInfo(serverName)
             if (serverInfo == null) {
-                proxy.console.sendMessage(TextComponent("$pluginPrefix 服务器不存在"))
+                proxy.console.sendMessage(TextComponent("$pluginPrefix $serverName 服务器不存在"))
                 return
             }
             proxiedPlayer.connect(serverInfo)
