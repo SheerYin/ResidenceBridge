@@ -1,5 +1,5 @@
 mysql:
-  # 数据库的 JDBC URL
+  # jdbc:mysql://<用户名>:<密码>@<主机>:<端口>/<数据库名>
   url: 'jdbc:mysql://root:password@localhost:3306/database'
   # 连接池的最大大小，默认建议值 10
   maximum-pool-size: 10

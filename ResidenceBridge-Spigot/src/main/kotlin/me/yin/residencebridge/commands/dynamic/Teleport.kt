@@ -29,7 +29,8 @@ object Teleport {
                 player.sendMessage("${ResidenceBridge.pluginPrefix} 领地不存在")
                 return@launch
             }
-            if (player.hasPermission("residence.admin.tp") || residenceInfo.ownerUUID == player.uniqueId || residenceInfo.residenceFlags["tp"] == true || residenceInfo.playerFlags[player.uniqueId.toString()]?.get("tp") == true) {
+            val playerUUID = player.uniqueId
+            if (player.hasPermission("residence.admin.tp") || residenceInfo.ownerUUID == playerUUID || residenceInfo.residenceFlags["tp"] == true || residenceInfo.playerFlags[playerUUID.toString()]?.get("tp") == true) {
                 ResidenceTeleport.global(player, residenceName, residenceInfo.serverName)
                 player.sendMessage("${ResidenceBridge.pluginPrefix} 开始传送")
             } else {

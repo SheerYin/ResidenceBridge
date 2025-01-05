@@ -12,7 +12,6 @@ object PlayerQuit : Listener {
     fun onPlayerQuit(event: PlayerQuitEvent) {
         val player = event.player
 
-        DebounceCache.remove(player.name)
     }
 
 
