@@ -18,45 +18,35 @@ object DynamicTabExecutor : TabExecutor {
         }
         when {
             arguments.isEmpty() -> {
-                Help.dynamic(sender, mainPermission)
+                Help.dynamic(sender)
             }
 
             arguments.size == 1 -> {
                 when {
                     arguments[0] == "help" -> {
-                        Help.dynamic(sender, mainPermission)
+                        Help.dynamic(sender)
                     }
 
                     arguments[0] == "list" -> {
-                        val player = sender as? Player
-                        if (player == null) {
-                            sender.sendMessage(ResidenceBridge.pluginPrefix + " 此命令仅限玩家执行")
-                            return true
-                        }
-                        ListResidence.dynamic(player, mainPermission)
+                        ListResidence.dynamic(sender)
                     }
 
                     arguments[0] == "listall" -> {
-                        ListallResidence.dynamic(sender, mainPermission)
+                        ListallResidence.dynamic(sender)
                     }
 
                     arguments[0] == "import" -> {
-                        ImportResidence.dynamic(sender, mainPermission)
+                        ImportResidence.dynamic(sender)
                     }
                 }
             }
 
             arguments.size == 2 -> {
                 if (arguments[0] == "list") {
-                    ListResidence.dynamic(sender, arguments[1], mainPermission)
+                    ListResidence.dynamic(sender, arguments[1])
                 } else
                     if (arguments[0] == "teleport") {
-                        val player = sender as? Player
-                        if (player == null) {
-                            sender.sendMessage(ResidenceBridge.pluginPrefix + " 此命令仅限玩家执行")
-                            return true
-                        }
-                        Teleport.dynamic(player, mainPermission, arguments[1])
+                        Teleport.dynamic(sender, arguments[1])
                     }
             }
         }
@@ -66,15 +56,23 @@ object DynamicTabExecutor : TabExecutor {
     override fun onTabComplete(sender: CommandSender, command: Command, label: String, arguments: Array<out String>): List<String> {
         when (arguments.size) {
             1 -> {
-                return prune(arguments[0], "help", "list", "listall", "teleport", "import")
+                return prune(arguments[0], listOf("help", "list", "listall", "teleport", "import"))
             }
 
             2 -> {
                 if (arguments[0] == "list") {
-                    val s = arguments[1]
-                    return ResidenceBridge.bukkitServer.onlinePlayers.mapNotNull { player ->
-                        player.name.takeIf { arguments.isEmpty() || it.startsWith(s, ignoreCase = true) }
+                    val argument = arguments[1]
+                    val empty = argument.isEmpty()
+                    val list = mutableListOf<String>()
+                    for (player in ResidenceBridge.bukkitServer.onlinePlayers) {
+                        val playerName = player.name
+                        if (empty) {
+                            list.add(playerName)
+                        } else if (playerName.startsWith(argument, true)) {
+                            list.add(playerName)
+                        }
                     }
+                    return list
                 } else
                     if (arguments[0] == "teleport") {
                         val player = sender as? Player ?: return emptyList()
@@ -84,14 +82,6 @@ object DynamicTabExecutor : TabExecutor {
             }
         }
         return emptyList()
-    }
-
-    private fun prune(argument: String, vararg suggest: String): List<String> {
-        if (argument.isEmpty()) {
-            return suggest.toList()
-        } else {
-            return suggest.filter { it.startsWith(argument, ignoreCase = true) }
-        }
     }
 
     private fun prune(argument: String, suggest: List<String>): List<String> {

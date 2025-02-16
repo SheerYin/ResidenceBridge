@@ -12,8 +12,8 @@ object ImportResidence {
 
     private val mainParameter = "import"
 
-    fun dynamic(sender: CommandSender, mainPermission: String) {
-        if (!DynamicTabExecutor.permissionMessage(sender, "$mainPermission.$mainParameter")) {
+    fun dynamic(sender: CommandSender) {
+        if (!DynamicTabExecutor.permissionMessage(sender, "${DynamicTabExecutor.mainPermission}.$mainParameter")) {
             return
         }
 
@@ -50,10 +50,10 @@ object ImportResidence {
 
             if (duplicates.isEmpty()) {
                 ResidenceStorage.batchInsertResidences(residenceInfos)
-                sender.sendMessage(ResidenceBridge.pluginPrefix + " 导入完成")
+                sender.sendMessage("${ResidenceBridge.pluginPrefix} 导入完成")
             } else {
-                sender.sendMessage(ResidenceBridge.pluginPrefix + " 数据库中已有重名领地 " + duplicates)
-                sender.sendMessage(ResidenceBridge.pluginPrefix + " 请处理同名领地再重试")
+                sender.sendMessage("${ResidenceBridge.pluginPrefix} 数据库中已有重名领地 $duplicates")
+                sender.sendMessage("${ResidenceBridge.pluginPrefix} 请处理同名领地再重试")
             }
 
         }

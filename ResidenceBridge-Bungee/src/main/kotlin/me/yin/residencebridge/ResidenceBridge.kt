@@ -72,11 +72,11 @@ class ResidenceBridge : Plugin(), Listener {
             return
         }
 
-        val proxiedPlayer = event.receiver as? ProxiedPlayer
-        if (proxiedPlayer == null) {
-            // proxy.console.sendMessage(TextComponent("$pluginPrefix 不是玩家"))
-            return
-        }
+//        val proxiedPlayer = event.receiver as? ProxiedPlayer
+//        if (proxiedPlayer == null) {
+//            // proxy.console.sendMessage(TextComponent("$pluginPrefix 不是玩家"))
+//            return
+//        }
 
         DataInputStream(ByteArrayInputStream(event.data)).use { input ->
             val action = input.readUTF()
@@ -84,12 +84,18 @@ class ResidenceBridge : Plugin(), Listener {
                 return
             }
 
+            val playerName = input.readUTF()
             val residenceName = input.readUTF()
             val serverName = input.readUTF()
 
+            val proxiedPlayer = proxy.getPlayer(playerName)
+            if (proxiedPlayer == null) {
+//                proxy.console.sendMessage(TextComponent("$pluginPrefix 玩家 $playerName 不存在"))
+                return
+            }
             val serverInfo = proxy.getServerInfo(serverName)
             if (serverInfo == null) {
-                proxy.console.sendMessage(TextComponent("$pluginPrefix $serverName 服务器不存在"))
+                proxy.console.sendMessage(TextComponent("$pluginPrefix 服务器 $serverName 不存在"))
                 return
             }
             proxiedPlayer.connect(serverInfo)

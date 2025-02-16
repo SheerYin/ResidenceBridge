@@ -11,6 +11,7 @@ import me.yin.residencebridge.storage.ResidenceStorage
 import org.bukkit.Server
 import org.bukkit.plugin.java.JavaPlugin
 
+
 class ResidenceBridge : JavaPlugin() {
 
     companion object {
@@ -24,23 +25,24 @@ class ResidenceBridge : JavaPlugin() {
         lateinit var pluginAuthors: List<String>
         lateinit var pluginPrefix: String
 
-        fun broadcast(message: String) {
-            for (player in bukkitServer.onlinePlayers) {
-                player.sendMessage(message)
-            }
-        }
-
-        fun broadcastPrefix(message: String, prefix: String = pluginPrefix) {
-            for (player in bukkitServer.onlinePlayers) {
-                player.sendMessage("$prefix $message")
-            }
-        }
-
-        lateinit var scope: CoroutineScope
+        val scope: CoroutineScope = CoroutineScope(Dispatchers.IO)
 
         val pluginChannel: String by lazy { "${lowercaseName}:channel" }
 
+        // 如果需要 reload 则修改为 lateinit var
         val serverName: String by lazy { ConfigurationYAML.configuration.getString("server-name")!! }
+
+        //        fun broadcast(message: String) {
+//            for (player in bukkitServer.onlinePlayers) {
+//                player.sendMessage(message)
+//            }
+//        }
+//
+//        fun broadcastPrefix(message: String, prefix: String = pluginPrefix) {
+//            for (player in bukkitServer.onlinePlayers) {
+//                player.sendMessage("$prefix $message")
+//            }
+//        }
     }
 
     override fun onEnable() {
@@ -54,8 +56,6 @@ class ResidenceBridge : JavaPlugin() {
         pluginPrefix = "§f[§7${description.prefix}§f]"
 
         server.consoleSender.sendMessage("$pluginPrefix 插件开始加载 $pluginVersion")
-
-        scope = CoroutineScope(Dispatchers.IO)
 
         setupProvider()
 
@@ -84,9 +84,10 @@ class ResidenceBridge : JavaPlugin() {
     }
 
     private fun setupProvider() {
+        val pluginManager = server.pluginManager
         if (server.pluginManager.getPlugin("Residence") == null) {
             server.consoleSender.sendMessage("$pluginPrefix 找不到 Residence")
-            onDisable()
+            pluginManager.disablePlugin(this)
         }
 
 //        if (server.pluginManager.getPlugin("PlaceholderAPI") == null) {

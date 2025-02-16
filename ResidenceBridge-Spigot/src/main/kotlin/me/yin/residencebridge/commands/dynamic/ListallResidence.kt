@@ -10,11 +10,10 @@ object ListallResidence {
 
     private val mainParameter = "listall"
 
-    fun dynamic(sender: CommandSender, mainPermission: String) {
-        if (!DynamicTabExecutor.permissionMessage(sender, "$mainPermission.$mainParameter")) {
+    fun dynamic(sender: CommandSender) {
+        if (!DynamicTabExecutor.permissionMessage(sender, "${DynamicTabExecutor.mainPermission}.$mainParameter")) {
             return
         }
-
 
         ResidenceBridge.scope.launch {
             val residenceInfos = ResidenceStorage.selectResidences()

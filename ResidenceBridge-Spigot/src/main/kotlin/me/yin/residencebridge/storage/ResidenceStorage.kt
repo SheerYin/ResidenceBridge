@@ -4,6 +4,7 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
+import me.yin.residencebridge.ResidenceBridge
 import me.yin.residencebridge.model.ResidenceInfo
 import me.yin.residencebridge.repository.ResidenceYAML
 import java.sql.Connection
@@ -37,15 +38,15 @@ object ResidenceStorage {
     
     private lateinit var table: String
     private fun createTable() {
-        table = tablePrefix + "bridge"
+        table = tablePrefix + ResidenceBridge.lowercaseName
         val sql = """
         CREATE TABLE IF NOT EXISTS $table (
-            id BIGINT AUTO_INCREMENT PRIMARY KEY,
+            id INT AUTO_INCREMENT PRIMARY KEY,
             residence_name VARCHAR(64) NOT NULL,
             owner_uuid VARCHAR(36),
             owner_name VARCHAR(64),
-            residence_flags JSON,
-            player_flags JSON,
+            residence_flags JSON DEFAULT NULL,
+            player_flags JSON DEFAULT NULL,
             server_name VARCHAR(64),
             INDEX (residence_name),
             INDEX (owner_uuid),
@@ -61,7 +62,7 @@ object ResidenceStorage {
 
     private val gson = Gson()
     fun insertResidence(residenceInfo: ResidenceInfo): Boolean {
-        val sql = "INSERT IGNORE INTO $table (residence_name, owner_uuid, owner_name, residence_flags, player_flags, server_name) VALUES (?, ?, ?, ?, ?, ?)"
+        val sql = "INSERT INTO $table (residence_name, owner_uuid, owner_name, residence_flags, player_flags, server_name) VALUES (?, ?, ?, ?, ?, ?)"
         dataSource.connection.use { connection ->
             connection.prepareStatement(sql).use { preparedStatement ->
                 preparedStatement.setString(1, residenceInfo.residenceName)
@@ -140,7 +141,7 @@ object ResidenceStorage {
     }
 
     fun selectResidences(): List<ResidenceInfo> {
-        val list: MutableList<ResidenceInfo> = arrayListOf()
+        val list: MutableList<ResidenceInfo> = mutableListOf()
 
         val sql = "SELECT residence_name, owner_uuid, owner_name, residence_flags, player_flags, server_name FROM $table"
         dataSource.connection.use { connection: Connection ->
@@ -165,7 +166,7 @@ object ResidenceStorage {
 
 
     fun selectResidenceNames(): List<String> {
-        val list: MutableList<String> = arrayListOf()
+        val list: MutableList<String> = mutableListOf()
 
         val sql = "SELECT residence_name FROM $table"
         dataSource.connection.use { connection: Connection ->
@@ -183,7 +184,7 @@ object ResidenceStorage {
 
 
     fun selectOwnerResidenceNames(ownerUUID: UUID): List<String> {
-        val list: MutableList<String> = arrayListOf()
+        val list: MutableList<String> = mutableListOf()
 
         val sql = "SELECT residence_name FROM $table WHERE owner_uuid = ?"
         dataSource.connection.use { connection: Connection ->
@@ -200,7 +201,7 @@ object ResidenceStorage {
     }
 
     fun selectOwnerResidenceNames(ownerName: String): List<String> {
-        val list: MutableList<String> = arrayListOf()
+        val list: MutableList<String> = mutableListOf()
 
         val sql = "SELECT residence_name FROM $table WHERE owner_name = ?"
         dataSource.connection.use { connection: Connection ->
@@ -217,7 +218,7 @@ object ResidenceStorage {
     }
 
     fun selectOwnerResidences(ownerUUID: UUID): List<ResidenceInfo> {
-        val list: MutableList<ResidenceInfo> = arrayListOf()
+        val list: MutableList<ResidenceInfo> = mutableListOf()
 
         val sql = "SELECT residence_name, owner_uuid, owner_name, residence_flags, player_flags, server_name FROM $table WHERE owner_uuid = ?"
         dataSource.connection.use { connection: Connection ->
@@ -242,7 +243,7 @@ object ResidenceStorage {
     }
 
     fun selectOwnerResidences(ownerName: String): List<ResidenceInfo> {
-        val list: MutableList<ResidenceInfo> = arrayListOf()
+        val list: MutableList<ResidenceInfo> = mutableListOf()
 
         val sql = "SELECT residence_name, owner_uuid, owner_name, residence_flags, player_flags, server_name FROM $table WHERE owner_name = ?"
         dataSource.connection.use { connection: Connection ->

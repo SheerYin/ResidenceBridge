@@ -6,14 +6,21 @@ import me.yin.residencebridge.commands.DynamicTabExecutor
 import me.yin.residencebridge.provider.register.ResidenceProviderRegister
 import me.yin.residencebridge.service.ResidenceTeleport
 import me.yin.residencebridge.storage.ResidenceStorage
+import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
 object Teleport {
 
     private val mainParameter = "teleport"
 
-    fun dynamic(player: Player, mainPermission: String, residenceName: String) {
-        if (!DynamicTabExecutor.permissionMessage(player, "$mainPermission.$mainParameter")) {
+    fun dynamic(sender: CommandSender, residenceName: String) {
+        if (!DynamicTabExecutor.permissionMessage(sender, "${DynamicTabExecutor.mainPermission}.$mainParameter")) {
+            return
+        }
+
+        val player = sender as? Player
+        if (player == null) {
+            sender.sendMessage(ResidenceBridge.pluginPrefix + " 此命令仅限玩家执行")
             return
         }
 

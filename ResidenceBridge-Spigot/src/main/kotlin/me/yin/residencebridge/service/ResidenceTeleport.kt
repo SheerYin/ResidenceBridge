@@ -16,6 +16,7 @@ object ResidenceTeleport {
         val byteArrayOutputStream = ByteArrayOutputStream()
         DataOutputStream(byteArrayOutputStream).use { output ->
             output.writeUTF("teleport")
+            output.writeUTF(player.name)
             output.writeUTF(residenceName)
             output.writeUTF(serverName)
         }

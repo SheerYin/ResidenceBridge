@@ -1,5 +1,6 @@
 package me.yin.residencebridge
 
+import com.google.gson.GsonBuilder
 import com.google.inject.Inject
 import com.velocitypowered.api.event.Subscribe
 import com.velocitypowered.api.event.connection.PluginMessageEvent
@@ -7,13 +8,16 @@ import com.velocitypowered.api.event.proxy.ProxyInitializeEvent
 import com.velocitypowered.api.event.proxy.ProxyShutdownEvent
 import com.velocitypowered.api.plugin.PluginContainer
 import com.velocitypowered.api.plugin.annotation.DataDirectory
-import com.velocitypowered.api.proxy.Player
 import com.velocitypowered.api.proxy.ProxyServer
 import com.velocitypowered.api.proxy.ServerConnection
 import com.velocitypowered.api.proxy.messages.MinecraftChannelIdentifier
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.TextComponent
 import net.kyori.adventure.text.format.NamedTextColor
+import net.kyori.adventure.text.minimessage.MiniMessage
+import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer
+import net.kyori.adventure.text.serializer.json.JSONComponentSerializer
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.DataInputStream
@@ -64,6 +68,25 @@ class ResidenceBridge @Inject constructor(val proxy: ProxyServer, @DataDirectory
 
     @Subscribe
     fun onProxyInitialize(event: ProxyInitializeEvent) {
+
+//        val a = MiniMessage.miniMessage().deserialize("<white>[<gray>prefix</gray>]</white>")
+//        val a1 = a.append(Component.text().content(" a text").color(NamedTextColor.GOLD).append(Component.text(" b text", NamedTextColor.RED)))
+//        val aJson = GsonComponentSerializer.gson().serializer().toJson(a1)
+//        proxy.sendMessage(Component.text(aJson))
+//        proxy.sendMessage(a1)
+//
+//        proxy.sendMessage(Component.text(""))
+//
+//        val b = Component.text().color(NamedTextColor.WHITE)
+//            .append(Component.text("["))
+//            .append(Component.text("prefix", NamedTextColor.GRAY))
+//            .append(Component.text("]"))
+//        val b1 = b.append(Component.text(" a text", NamedTextColor.GOLD)).append(Component.text(" b text", NamedTextColor.RED)).build()
+//        val bJson = GsonComponentSerializer.gson().serializer().toJson(b1)
+//        proxy.sendMessage(Component.text(bJson))
+//        proxy.sendMessage(b1)
+
+
         proxy.sendMessage(getPrefixComponent().append(Component.text(" 插件开始加载 $pluginVersion")).build())
         proxy.channelRegistrar.register(pluginChannel)
     }
@@ -83,11 +106,11 @@ class ResidenceBridge @Inject constructor(val proxy: ProxyServer, @DataDirectory
             return
         }
 
-        val player = event.target as? Player
-        if (player == null) {
-            // proxy.sendMessage(getPrefixComponent().append(Component.text(" 不是玩家")).build())
-            return
-        }
+//        val player = event.target as? Player
+//        if (player == null) {
+//            // proxy.sendMessage(getPrefixComponent().append(Component.text(" 不是玩家")).build())
+//            return
+//        }
 
         DataInputStream(ByteArrayInputStream(event.data)).use { input ->
             val action = input.readUTF()
@@ -95,9 +118,15 @@ class ResidenceBridge @Inject constructor(val proxy: ProxyServer, @DataDirectory
                 return
             }
 
+            val playerName = input.readUTF()
             val residenceName = input.readUTF()
             val serverName = input.readUTF()
 
+            val player = proxy.getPlayer(playerName).orElse(null)
+            if (player == null) {
+//                proxy.console.sendMessage(TextComponent("$pluginPrefix 玩家 $playerName 不存在"))
+                return
+            }
             val registeredServer = proxy.getServer(serverName).orElse(null)
             if (registeredServer == null) {
                 proxy.sendMessage(getPrefixComponent().append(Component.text(" $serverName 服务器不存在")).build())
