@@ -36,7 +36,9 @@ object ReceivePluginMessage : PluginMessageListener {
             ResidenceBridge.scope.launch {
                 val claimedResidence = ResidenceProviderRegister.residence.residenceManager.getByName(residenceName)
                 if (claimedResidence != null) {
-                    ResidenceTeleport.local(player, claimedResidence)
+                    ResidenceBridge.bukkitServer.scheduler.runTask(ResidenceBridge.instance, Runnable {
+                        ResidenceTeleport.local(player, claimedResidence)
+                    })
                 }
             }
         }
