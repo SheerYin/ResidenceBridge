@@ -18,9 +18,11 @@ object ConfigurationYAML {
     }
 
     lateinit var configuration: YamlConfiguration
+    lateinit var serverName: String
     fun load() {
         configuration = YamlConfiguration.loadConfiguration(path.toFile())
+
+        serverName = configuration.getString("server-name")!!
     }
 
-    val serverName: String by lazy { configuration.getString("server-name")!! }
 }

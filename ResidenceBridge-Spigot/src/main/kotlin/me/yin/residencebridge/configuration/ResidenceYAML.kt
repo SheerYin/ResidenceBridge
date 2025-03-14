@@ -41,4 +41,5 @@ object ResidenceYAML {
     fun load() {
         configuration = YamlConfiguration.loadConfiguration(path.toFile())
     }
+
 }

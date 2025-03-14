@@ -28,16 +28,15 @@ class ResidenceBridge : JavaPlugin() {
 
         val pluginChannel: String by lazy { "${lowercaseName}:channel" }
 
-        // 如果需要 reload 则修改为 lateinit var
 
-        //        fun broadcast(message: String) {
-//            for (player in bukkitServer.onlinePlayers) {
+//        fun broadcast(message: String) {
+//            for (player in Bukkit.getOnlinePlayers()) {
 //                player.sendMessage(message)
 //            }
 //        }
 //
 //        fun broadcastPrefix(message: String, prefix: String = pluginPrefix) {
-//            for (player in bukkitServer.onlinePlayers) {
+//            for (player in Bukkit.getOnlinePlayers()) {
 //                player.sendMessage("$prefix $message")
 //            }
 //        }
