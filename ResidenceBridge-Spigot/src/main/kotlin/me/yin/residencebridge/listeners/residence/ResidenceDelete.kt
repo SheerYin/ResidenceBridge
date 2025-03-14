@@ -3,7 +3,7 @@ package me.yin.residencebridge.listeners.residence
 import com.bekvon.bukkit.residence.event.ResidenceDeleteEvent
 import kotlinx.coroutines.launch
 import me.yin.residencebridge.ResidenceBridge
-import me.yin.residencebridge.storage.ResidenceStorage
+import me.yin.residencebridge.persistence.ResidenceMySQL
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 
@@ -17,7 +17,7 @@ object ResidenceDelete : Listener {
 //        Bukkit.broadcastMessage("触发 onResidenceDelete")
 
         ResidenceBridge.scope.launch {
-            ResidenceStorage.deleteResidence(residenceName)
+            ResidenceMySQL.deleteResidence(residenceName)
         }
     }
 }

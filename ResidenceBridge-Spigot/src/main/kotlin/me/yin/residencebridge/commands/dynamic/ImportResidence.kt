@@ -3,27 +3,34 @@ package me.yin.residencebridge.commands.dynamic
 import kotlinx.coroutines.launch
 import me.yin.residencebridge.ResidenceBridge
 import me.yin.residencebridge.commands.DynamicTabExecutor
+import me.yin.residencebridge.configuration.ConfigurationYAML
 import me.yin.residencebridge.model.ResidenceInfo
 import me.yin.residencebridge.provider.register.ResidenceProviderRegister
-import me.yin.residencebridge.storage.ResidenceStorage
+import me.yin.residencebridge.persistence.ResidenceMySQL
 import org.bukkit.command.CommandSender
 
 object ImportResidence {
 
-    private val mainParameter = "import"
+    val mainParameter = "import"
 
     fun dynamic(sender: CommandSender) {
         if (!DynamicTabExecutor.permissionMessage(sender, "${DynamicTabExecutor.mainPermission}.$mainParameter")) {
             return
         }
 
+        val residenceInstance = ResidenceProviderRegister.residence
+        if (residenceInstance == null) {
+            sender.sendMessage("${ResidenceBridge.pluginPrefix} 未安装 Residence")
+            return
+        }
+
         ResidenceBridge.scope.launch {
-            val map = ResidenceProviderRegister.residence.residenceManager.residences
+            val map = residenceInstance.residenceManager.residences
 
             val localNames = mutableListOf<String>()
-            val globalNames = ResidenceStorage.selectResidenceNames()
+            val globalNames = ResidenceMySQL.selectResidenceNames()
 
-            val serverName = ResidenceBridge.serverName
+            val serverName = ConfigurationYAML.serverName
             val residenceInfos = mutableListOf<ResidenceInfo>()
             for ((key, claimedResidence) in map) {
                 // key 是小写
@@ -49,7 +56,7 @@ object ImportResidence {
             }
 
             if (duplicates.isEmpty()) {
-                ResidenceStorage.batchInsertResidences(residenceInfos)
+                ResidenceMySQL.batchInsertResidences(residenceInfos)
                 sender.sendMessage("${ResidenceBridge.pluginPrefix} 导入完成")
             } else {
                 sender.sendMessage("${ResidenceBridge.pluginPrefix} 数据库中已有重名领地 $duplicates")
@@ -62,10 +69,16 @@ object ImportResidence {
 
 
     fun amns() {
-        val serverName = ResidenceBridge.serverName
+        val residenceInstance = ResidenceProviderRegister.residence
+        if (residenceInstance == null) {
+            // sender.sendMessage("${ResidenceBridge.pluginPrefix} 未安装 Residence")
+            return
+        }
+
+        val serverName = ConfigurationYAML.serverName
 
         val localResidenceInfos = mutableListOf<ResidenceInfo>()
-        val map = ResidenceProviderRegister.residence.residenceManager.residences
+        val map = residenceInstance.residenceManager.residences
         for ((key, claimedResidence) in map) {
             localResidenceInfos.add(
                 ResidenceInfo(
@@ -79,7 +92,7 @@ object ImportResidence {
             )
         }
 
-        val globalResidenceInfos = ResidenceStorage.selectResidences()
+        val globalResidenceInfos = ResidenceMySQL.selectResidences()
 
         val duplicates = mutableListOf<ResidenceInfo>()
         localResidenceInfos.forEach { localResidenceInfo ->

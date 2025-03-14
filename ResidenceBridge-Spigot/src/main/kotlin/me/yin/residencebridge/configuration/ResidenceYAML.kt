@@ -1,4 +1,4 @@
-package me.yin.residencebridge.repository
+package me.yin.residencebridge.configuration
 
 import me.yin.residencebridge.ResidenceBridge
 import org.bukkit.configuration.file.YamlConfiguration
@@ -8,7 +8,7 @@ import java.nio.file.StandardCopyOption
 
 object ResidenceYAML {
 
-    private lateinit var path: Path
+    lateinit var path: Path
     fun initialize() {
         val instance = ResidenceBridge.instance
 

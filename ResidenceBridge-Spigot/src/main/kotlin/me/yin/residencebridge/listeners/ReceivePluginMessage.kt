@@ -4,6 +4,7 @@ import kotlinx.coroutines.launch
 import me.yin.residencebridge.ResidenceBridge
 import me.yin.residencebridge.provider.register.ResidenceProviderRegister
 import me.yin.residencebridge.service.ResidenceTeleport
+import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.plugin.messaging.PluginMessageListener
@@ -27,16 +28,22 @@ object ReceivePluginMessage : PluginMessageListener {
             val playerName = input.readUTF()
             val residenceName = input.readUTF()
 
-            val target = ResidenceBridge.bukkitServer.getPlayerExact(playerName)
+            val target = Bukkit.getPlayerExact(playerName)
             if (target == null) {
                 //
                 return
             }
 
+            val residenceInstance = ResidenceProviderRegister.residence
+            if (residenceInstance == null) {
+                // 没装 residence
+                return
+            }
+
             ResidenceBridge.scope.launch {
-                val claimedResidence = ResidenceProviderRegister.residence.residenceManager.getByName(residenceName)
+                val claimedResidence = residenceInstance.residenceManager.getByName(residenceName)
                 if (claimedResidence != null) {
-                    ResidenceBridge.bukkitServer.scheduler.runTask(ResidenceBridge.instance, Runnable {
+                    Bukkit.getScheduler().runTask(ResidenceBridge.instance, Runnable {
                         ResidenceTeleport.local(player, claimedResidence)
                     })
                 }

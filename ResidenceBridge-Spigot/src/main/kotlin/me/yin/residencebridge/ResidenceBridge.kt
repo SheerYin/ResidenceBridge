@@ -1,23 +1,22 @@
 package me.yin.residencebridge
 
+import com.bekvon.bukkit.residence.Residence
 import kotlinx.coroutines.*
 import me.yin.residencebridge.commands.DynamicTabExecutor
+import me.yin.residencebridge.configuration.ConfigurationYAML
+import me.yin.residencebridge.configuration.ResidenceYAML
 import me.yin.residencebridge.listeners.PlayerJoin
 import me.yin.residencebridge.listeners.ReceivePluginMessage
 import me.yin.residencebridge.listeners.residence.*
-import me.yin.residencebridge.repository.ConfigurationYAML
-import me.yin.residencebridge.repository.ResidenceYAML
-import me.yin.residencebridge.storage.ResidenceStorage
-import org.bukkit.Server
+import me.yin.residencebridge.persistence.ResidenceMySQL
+import me.yin.residencebridge.provider.register.ResidenceBridgeExpansion
+import me.yin.residencebridge.provider.register.ResidenceProviderRegister
 import org.bukkit.plugin.java.JavaPlugin
-
 
 class ResidenceBridge : JavaPlugin() {
 
     companion object {
         lateinit var instance: ResidenceBridge
-
-        lateinit var bukkitServer: Server
 
         lateinit var pluginName: String
         val lowercaseName: String by lazy { pluginName.lowercase() }
@@ -25,12 +24,11 @@ class ResidenceBridge : JavaPlugin() {
         lateinit var pluginAuthors: List<String>
         lateinit var pluginPrefix: String
 
-        val scope: CoroutineScope = CoroutineScope(Dispatchers.IO)
+        val scope: CoroutineScope by lazy { CoroutineScope(Dispatchers.IO) }
 
         val pluginChannel: String by lazy { "${lowercaseName}:channel" }
 
         // 如果需要 reload 则修改为 lateinit var
-        val serverName: String by lazy { ConfigurationYAML.configuration.getString("server-name")!! }
 
         //        fun broadcast(message: String) {
 //            for (player in bukkitServer.onlinePlayers) {
@@ -48,8 +46,6 @@ class ResidenceBridge : JavaPlugin() {
     override fun onEnable() {
         instance = this
 
-        bukkitServer = server
-
         pluginName = description.name
         pluginVersion = description.version
         pluginAuthors = description.authors
@@ -64,7 +60,7 @@ class ResidenceBridge : JavaPlugin() {
         ResidenceYAML.initialize()
         ResidenceYAML.load()
 
-        ResidenceStorage.initialize()
+        ResidenceMySQL.initialize()
 
         //
 
@@ -73,29 +69,30 @@ class ResidenceBridge : JavaPlugin() {
 
         server.pluginManager.registerEvents(PlayerJoin, this)
 
-        server.pluginManager.registerEvents(ResidenceCommand, this)
-        server.pluginManager.registerEvents(ResidenceCreation, this)
-        server.pluginManager.registerEvents(ResidenceDelete, this)
-        server.pluginManager.registerEvents(ResidenceFlagChange, this)
-        server.pluginManager.registerEvents(ResidenceOwnerChange, this)
-        server.pluginManager.registerEvents(ResidenceRename, this)
+        if (ResidenceProviderRegister.residence != null) {
+            server.pluginManager.registerEvents(ResidenceCommand, this)
+            server.pluginManager.registerEvents(ResidenceCreation, this)
+            server.pluginManager.registerEvents(ResidenceDelete, this)
+            server.pluginManager.registerEvents(ResidenceFlagChange, this)
+            server.pluginManager.registerEvents(ResidenceOwnerChange, this)
+            server.pluginManager.registerEvents(ResidenceRename, this)
+        }
 
         getCommand(lowercaseName)?.setExecutor(DynamicTabExecutor)
     }
 
-    private fun setupProvider() {
-        val pluginManager = server.pluginManager
+    fun setupProvider() {
         if (server.pluginManager.getPlugin("Residence") == null) {
-            server.consoleSender.sendMessage("$pluginPrefix 找不到 Residence")
-            pluginManager.disablePlugin(this)
+            server.consoleSender.sendMessage("$pluginPrefix 找不到 Residence 相关逻辑取消")
+        } else {
+           ResidenceProviderRegister.residence = Residence.getInstance()
         }
 
-//        if (server.pluginManager.getPlugin("PlaceholderAPI") == null) {
-//            server.consoleSender.sendMessage("$pluginPrefix 没有找到 PlaceholderAPI 无法提供解析 PlaceholderAPI 变量")
-//            onDisable()
-//        } else {
-//            ResidenceBridgeExpansion(this).register()
-//        }
+        if (server.pluginManager.getPlugin("PlaceholderAPI") == null) {
+            server.consoleSender.sendMessage("$pluginPrefix 没有找到 PlaceholderAPI 无法提供解析 PlaceholderAPI 变量")
+        } else {
+            ResidenceBridgeExpansion(this).register()
+        }
     }
 
     override fun onDisable() {
@@ -114,7 +111,7 @@ class ResidenceBridge : JavaPlugin() {
             }
         }
 
-        ResidenceStorage.dataSource.close()
+        ResidenceMySQL.dataSource.close()
     }
 
 

@@ -5,7 +5,7 @@ import kotlinx.coroutines.launch
 import me.yin.residencebridge.ResidenceBridge
 import me.yin.residencebridge.provider.register.ResidenceProviderRegister
 import me.yin.residencebridge.service.ResidenceTeleport
-import me.yin.residencebridge.storage.ResidenceStorage
+import me.yin.residencebridge.persistence.ResidenceMySQL
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -27,7 +27,7 @@ object ResidenceCommand : Listener {
                         event.isCancelled = true
 
                         ResidenceBridge.scope.launch {
-                            val names = ResidenceStorage.selectOwnerResidenceNames(player.uniqueId)
+                            val names = ResidenceMySQL.selectOwnerResidenceNames(player.uniqueId)
                             player.sendMessage("${ResidenceBridge.pluginPrefix} 玩家 §2${player.name}§f 领地列表")
                             for (name in names) {
                                 player.sendMessage("${ResidenceBridge.pluginPrefix} 领地 $name")
@@ -40,13 +40,14 @@ object ResidenceCommand : Listener {
                     when {
                         arguments[0].lowercase() == "tp" -> {
                             val residenceName = arguments[1]
-                            if (ResidenceProviderRegister.residence.residenceManager.getByName(residenceName) != null) {
+
+                            if (ResidenceProviderRegister.residence!!.residenceManager.getByName(residenceName) != null) {
                                 return // 本地存在领地
                             }
                             event.isCancelled = true
 
                             ResidenceBridge.scope.launch {
-                                val residenceInfo = ResidenceStorage.selectResidence(residenceName)
+                                val residenceInfo = ResidenceMySQL.selectResidence(residenceName)
                                 if (residenceInfo == null) {
                                     player.sendMessage("${ResidenceBridge.pluginPrefix} 领地不存在")
                                     return@launch
@@ -62,14 +63,14 @@ object ResidenceCommand : Listener {
                         }
 
                         arguments[0].lowercase() == "create" -> {
-                            if (ResidenceStorage.isResidenceExists(arguments[1])) {
+                            if (ResidenceMySQL.isResidenceExists(arguments[1])) {
                                 player.sendMessage("${ResidenceBridge.pluginPrefix} 领地重名")
                                 event.isCancelled = true
                             } else {
-                                val maximum = ResidenceProviderRegister.residence.playerManager.getMaxResidences(player.name)
-                                val count = ResidenceStorage.selectOwnerResidencesCount(player.uniqueId)
-                                if (count >= maximum) {
-                                    player.sendMessage("${ResidenceBridge.pluginPrefix} 创建领地已达上限 $count / $maximum")
+                                val maximum = ResidenceProviderRegister.residence!!.playerManager.getMaxResidences(player.name)
+                                val amount = ResidenceMySQL.selectOwnerResidencesCount(player.uniqueId) ?: 0
+                                if (amount >= maximum) {
+                                    player.sendMessage("${ResidenceBridge.pluginPrefix} 创建领地已达上限 $amount / $maximum")
                                     event.isCancelled = true
                                 }
                             }
@@ -80,7 +81,7 @@ object ResidenceCommand : Listener {
         } else if (command == "resadmin") {
             // 防管理员
             if (arguments.size == 2 && arguments[0] == "create") {
-                if (ResidenceStorage.isResidenceExists(arguments[1])) {
+                if (ResidenceMySQL.isResidenceExists(arguments[1])) {
                     player.sendMessage("${ResidenceBridge.pluginPrefix} 领地重名")
                     event.isCancelled = true
                 }
@@ -150,7 +151,7 @@ object ResidenceCommand : Listener {
 //    }
 //
 //
-//    private fun listOne(player: Player, event: ResidenceCommandEvent) {
+//    fun listOne(player: Player, event: ResidenceCommandEvent) {
 //        val playerName = player.name
 //
 //        val names = ResidenceInfoMySQL.getOwnerResidenceNames(playerName)
@@ -199,7 +200,7 @@ object ResidenceCommand : Listener {
 //    }
 //
 //
-//    private fun teleport(player: Player, residenceName: String, event: ResidenceCommandEvent) {
+//    fun teleport(player: Player, residenceName: String, event: ResidenceCommandEvent) {
 //
 //        val claimedResidence = Residence.getInstance().residenceManager.residences[residenceName.lowercase()]
 //        if (claimedResidence != null) {

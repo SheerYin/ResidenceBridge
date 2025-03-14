@@ -1,4 +1,4 @@
-package me.yin.residencebridge.storage
+package me.yin.residencebridge.persistence
 
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -6,17 +6,17 @@ import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import me.yin.residencebridge.ResidenceBridge
 import me.yin.residencebridge.model.ResidenceInfo
-import me.yin.residencebridge.repository.ResidenceYAML
+import me.yin.residencebridge.configuration.ResidenceYAML
 import java.sql.Connection
 import java.sql.SQLException
 import java.util.*
 
-object ResidenceStorage {
+object ResidenceMySQL {
 
     // jdbcUrl = "jdbc:mysql://${user}:${password}@localhost:3306/database"
 
     lateinit var dataSource: HikariDataSource
-    private lateinit var tablePrefix: String
+    lateinit var tablePrefix: String
     fun initialize() {
 
         val configuration = ResidenceYAML.configuration
@@ -36,8 +36,8 @@ object ResidenceStorage {
         createTable()
     }
     
-    private lateinit var table: String
-    private fun createTable() {
+    lateinit var table: String
+    fun createTable() {
         table = tablePrefix + ResidenceBridge.lowercaseName
         val sql = """
         CREATE TABLE IF NOT EXISTS $table (
@@ -60,7 +60,7 @@ object ResidenceStorage {
         }
     }
 
-    private val gson = Gson()
+    val gson = Gson()
     fun insertResidence(residenceInfo: ResidenceInfo): Boolean {
         val sql = "INSERT INTO $table (residence_name, owner_uuid, owner_name, residence_flags, player_flags, server_name) VALUES (?, ?, ?, ?, ?, ?)"
         dataSource.connection.use { connection ->
@@ -283,36 +283,34 @@ object ResidenceStorage {
         return null
     }
 
-    fun selectOwnerResidencesCount(ownerName: String): Int {
-        var count = 0 // 初始化数量为0
+    fun selectOwnerResidencesCount(ownerName: String): Int? {
         val sql = "SELECT COUNT(*) AS residence_count FROM $table WHERE owner_name = ?"
         dataSource.connection.use { connection ->
             connection.prepareStatement(sql).use { preparedStatement ->
                 preparedStatement.setString(1, ownerName)
                 preparedStatement.executeQuery().use { resultSet ->
                     if (resultSet.next()) {
-                        count = resultSet.getInt("residence_count")
+                        return resultSet.getInt("residence_count")
                     }
                 }
             }
         }
-        return count
+        return null
     }
 
-    fun selectOwnerResidencesCount(ownerUUID: UUID): Int {
-        var count = 0 // 初始化数量为0
+    fun selectOwnerResidencesCount(ownerUUID: UUID): Int? {
         val sql = "SELECT COUNT(*) AS residence_count FROM $table WHERE owner_uuid = ?"
         dataSource.connection.use { connection ->
             connection.prepareStatement(sql).use { preparedStatement ->
                 preparedStatement.setString(1, ownerUUID.toString())
                 preparedStatement.executeQuery().use { resultSet ->
                     if (resultSet.next()) {
-                        count = resultSet.getInt("residence_count")
+                        return resultSet.getInt("residence_count")
                     }
                 }
             }
         }
-        return count
+        return null
     }
 
     fun isResidenceExists(residenceName: String): Boolean {

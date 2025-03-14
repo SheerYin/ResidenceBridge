@@ -2,7 +2,8 @@ package me.yin.residencebridge.commands
 
 import me.yin.residencebridge.ResidenceBridge
 import me.yin.residencebridge.commands.dynamic.*
-import me.yin.residencebridge.storage.ResidenceStorage
+import me.yin.residencebridge.persistence.ResidenceMySQL
+import org.bukkit.Bukkit
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.command.TabExecutor
@@ -64,7 +65,7 @@ object DynamicTabExecutor : TabExecutor {
                     val argument = arguments[1]
                     val empty = argument.isEmpty()
                     val list = mutableListOf<String>()
-                    for (player in ResidenceBridge.bukkitServer.onlinePlayers) {
+                    for (player in Bukkit.getOnlinePlayers()) {
                         val playerName = player.name
                         if (empty) {
                             list.add(playerName)
@@ -76,7 +77,7 @@ object DynamicTabExecutor : TabExecutor {
                 } else
                     if (arguments[0] == "teleport") {
                         val player = sender as? Player ?: return emptyList()
-                        val names = ResidenceStorage.selectOwnerResidenceNames(player.uniqueId)
+                        val names = ResidenceMySQL.selectOwnerResidenceNames(player.uniqueId)
                         return prune(arguments[1], names)
                     }
             }
@@ -84,7 +85,7 @@ object DynamicTabExecutor : TabExecutor {
         return emptyList()
     }
 
-    private fun prune(argument: String, suggest: List<String>): List<String> {
+    fun prune(argument: String, suggest: List<String>): List<String> {
         if (argument.isEmpty()) {
             return suggest
         } else {

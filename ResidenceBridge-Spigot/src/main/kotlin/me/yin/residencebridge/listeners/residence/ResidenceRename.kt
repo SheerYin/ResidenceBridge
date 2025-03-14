@@ -3,7 +3,7 @@ package me.yin.residencebridge.listeners.residence
 import com.bekvon.bukkit.residence.event.ResidenceRenameEvent
 import kotlinx.coroutines.launch
 import me.yin.residencebridge.ResidenceBridge
-import me.yin.residencebridge.storage.ResidenceStorage
+import me.yin.residencebridge.persistence.ResidenceMySQL
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 
@@ -18,13 +18,13 @@ object ResidenceRename : Listener {
         val oldName = event.oldResidenceName
         val newName = event.newResidenceName
 
-        if (ResidenceStorage.isResidenceExists(oldName)) {
+        if (ResidenceMySQL.isResidenceExists(oldName)) {
             // Bukkit.getPlayerExact(event.residence.owner)?.sendMessage(MessageYAML.configuration.getString("command.create-name-already-exists"))
             event.isCancelled = true
             return
         } else {
             ResidenceBridge.scope.launch {
-                ResidenceStorage.updateResidenceName(oldName, newName)
+                ResidenceMySQL.updateResidenceName(oldName, newName)
             }
         }
     }

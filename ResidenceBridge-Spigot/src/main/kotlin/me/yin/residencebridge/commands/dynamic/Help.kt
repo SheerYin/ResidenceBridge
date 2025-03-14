@@ -6,7 +6,7 @@ import org.bukkit.command.CommandSender
 
 object Help {
 
-    private val mainParameter = "help"
+    val mainParameter = "help"
 
     fun dynamic(sender: CommandSender) {
         if (!DynamicTabExecutor.permissionMessage(sender, "${DynamicTabExecutor.mainPermission}.$mainParameter")) {

@@ -1,6 +1,5 @@
 package me.yin.residencebridge.listeners
 
-import me.yin.residencebridge.cache.DebounceCache
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener

@@ -2,6 +2,7 @@ package me.yin.residencebridge.provider.register
 
 import me.clip.placeholderapi.expansion.PlaceholderExpansion
 import me.yin.residencebridge.ResidenceBridge
+import me.yin.residencebridge.persistence.ResidenceMySQL
 import org.bukkit.OfflinePlayer
 import org.bukkit.plugin.Plugin
 
@@ -27,15 +28,17 @@ class ResidenceBridgeExpansion(plugin: Plugin) : PlaceholderExpansion() {
         val player = (offlinePlayer.player) ?: return null
         when {
             parameters.equals("amount", ignoreCase = true) -> {
-                return ""
-                // ResidenceInfoMySQL.getOwnerResidenceNames(player.uniqueId).size.toString()
+                val amount = ResidenceMySQL.selectOwnerResidencesCount(player.uniqueId)
+                return amount.toString()
             }
 
             parameters.equals("maximum", ignoreCase = true) -> {
-                return ""
-                // Limit.numberPermissions(player).toString()
+                val residenceInstance = ResidenceProviderRegister.residence
+                if (residenceInstance == null) {
+                    return ""
+                }
+                return residenceInstance.playerManager.getMaxResidences(player.name).toString()
             }
-
             else -> {
                 return null
             }
