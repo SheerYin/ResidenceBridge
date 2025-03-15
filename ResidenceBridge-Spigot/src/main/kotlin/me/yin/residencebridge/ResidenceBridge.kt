@@ -9,7 +9,7 @@ import me.yin.residencebridge.listener.PlayerJoin
 import me.yin.residencebridge.listener.ReceivePluginMessage
 import me.yin.residencebridge.listener.residence.*
 import me.yin.residencebridge.persistence.ResidenceMySQL
-import me.yin.residencebridge.provider.register.ResidenceBridgeExpansion
+import me.yin.residencebridge.placeholder.ResidenceBridgeExpansion
 import me.yin.residencebridge.provider.register.ResidenceProviderRegister
 import org.bukkit.plugin.java.JavaPlugin
 
@@ -52,7 +52,7 @@ class ResidenceBridge : JavaPlugin() {
 
         server.consoleSender.sendMessage("$pluginPrefix 插件开始加载 $pluginVersion")
 
-        setupProvider()
+        pluginDependencies()
 
         ConfigurationYAML.initialize()
         ConfigurationYAML.load()
@@ -60,8 +60,6 @@ class ResidenceBridge : JavaPlugin() {
         ResidenceYAML.load()
 
         ResidenceMySQL.initialize()
-
-        //
 
         server.messenger.registerOutgoingPluginChannel(this, pluginChannel)
         server.messenger.registerIncomingPluginChannel(this, pluginChannel, ReceivePluginMessage)
@@ -78,20 +76,6 @@ class ResidenceBridge : JavaPlugin() {
         }
 
         getCommand(lowercaseName)?.setExecutor(DynamicTabExecutor)
-    }
-
-    fun setupProvider() {
-        if (server.pluginManager.getPlugin("Residence") == null) {
-            server.consoleSender.sendMessage("$pluginPrefix 找不到 Residence 相关逻辑取消")
-        } else {
-           ResidenceProviderRegister.residence = Residence.getInstance()
-        }
-
-        if (server.pluginManager.getPlugin("PlaceholderAPI") == null) {
-            server.consoleSender.sendMessage("$pluginPrefix 没有找到 PlaceholderAPI 无法提供解析 PlaceholderAPI 变量")
-        } else {
-            ResidenceBridgeExpansion(this).register()
-        }
     }
 
     override fun onDisable() {
@@ -111,6 +95,20 @@ class ResidenceBridge : JavaPlugin() {
         }
 
         ResidenceMySQL.dataSource.close()
+    }
+
+    fun pluginDependencies() {
+        if (server.pluginManager.getPlugin("Residence") == null) {
+            server.consoleSender.sendMessage("$pluginPrefix 找不到 Residence 相关逻辑取消")
+        } else {
+            ResidenceProviderRegister.residence = Residence.getInstance()
+        }
+
+        if (server.pluginManager.getPlugin("PlaceholderAPI") == null) {
+            server.consoleSender.sendMessage("$pluginPrefix 没有找到 PlaceholderAPI 无法提供解析 PlaceholderAPI 变量")
+        } else {
+            ResidenceBridgeExpansion(this).register()
+        }
     }
 
 

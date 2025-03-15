@@ -12,7 +12,7 @@ object ResidenceYAML {
     fun initialize() {
         val instance = ResidenceBridge.instance
 
-        val target = ConfigurationYAML.configuration.getString("residence.file.path") ?: return
+        val target = ConfigurationYAML.configuration.getString("residence.file.path")!!
         val directory: Path
         if (target.isEmpty()) { // 确定目录路径
             directory = instance.dataFolder.toPath()

@@ -1,8 +1,9 @@
-package me.yin.residencebridge.provider.register
+package me.yin.residencebridge.placeholder
 
 import me.clip.placeholderapi.expansion.PlaceholderExpansion
 import me.yin.residencebridge.ResidenceBridge
 import me.yin.residencebridge.persistence.ResidenceMySQL
+import me.yin.residencebridge.provider.register.ResidenceProviderRegister
 import org.bukkit.OfflinePlayer
 import org.bukkit.plugin.Plugin
 
