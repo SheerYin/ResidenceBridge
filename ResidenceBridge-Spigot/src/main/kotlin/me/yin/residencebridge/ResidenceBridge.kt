@@ -4,7 +4,7 @@ import com.bekvon.bukkit.residence.Residence
 import kotlinx.coroutines.*
 import me.yin.residencebridge.command.DynamicTabExecutor
 import me.yin.residencebridge.configuration.ConfigurationYAML
-import me.yin.residencebridge.configuration.ResidenceYAML
+import me.yin.residencebridge.configuration.DatabaseYAML
 import me.yin.residencebridge.listener.PlayerJoin
 import me.yin.residencebridge.listener.ReceivePluginMessage
 import me.yin.residencebridge.listener.residence.*
@@ -56,8 +56,8 @@ class ResidenceBridge : JavaPlugin() {
 
         ConfigurationYAML.initialize()
         ConfigurationYAML.load()
-        ResidenceYAML.initialize()
-        ResidenceYAML.load()
+        DatabaseYAML.initialize()
+        DatabaseYAML.load()
 
         ResidenceMySQL.initialize()
 

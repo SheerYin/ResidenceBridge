@@ -6,7 +6,7 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.StandardCopyOption
 
-object ResidenceYAML {
+object DatabaseYAML {
 
     lateinit var path: Path
     fun initialize() {
@@ -28,10 +28,10 @@ object ResidenceYAML {
             Files.createDirectory(directory)
         }
 
-        path = directory.resolve("residence.yml")
+        path = directory.resolve("database.yml")
 
         if (Files.notExists(path)) { // 如果文件不存在，复制资源文件
-            instance.getResource("residence.yml").use { inputStream ->
+            instance.getResource("database.yml").use { inputStream ->
                 Files.copy(inputStream, path, StandardCopyOption.REPLACE_EXISTING)
             }
         }

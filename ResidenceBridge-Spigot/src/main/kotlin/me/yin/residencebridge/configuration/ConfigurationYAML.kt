@@ -22,7 +22,7 @@ object ConfigurationYAML {
     fun load() {
         configuration = YamlConfiguration.loadConfiguration(path.toFile())
 
-        serverName = configuration.getString("server-name")!!
+        serverName = configuration.getString("residence.server-name")!!
     }
 
 }

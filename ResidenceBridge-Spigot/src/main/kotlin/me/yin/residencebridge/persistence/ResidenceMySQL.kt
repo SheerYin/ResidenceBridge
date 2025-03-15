@@ -6,7 +6,7 @@ import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import me.yin.residencebridge.ResidenceBridge
 import me.yin.residencebridge.model.ResidenceInfo
-import me.yin.residencebridge.configuration.ResidenceYAML
+import me.yin.residencebridge.configuration.DatabaseYAML
 import java.sql.Connection
 import java.sql.SQLException
 import java.util.*
@@ -19,19 +19,19 @@ object ResidenceMySQL {
     lateinit var tablePrefix: String
     fun initialize() {
 
-        val configuration = ResidenceYAML.configuration
+        val configuration = DatabaseYAML.configuration
 
         val hikariConfig = HikariConfig().apply {
-            jdbcUrl = configuration.getString("mysql.url")
-            maximumPoolSize = configuration.getInt("mysql.maximum-pool-size")
-            minimumIdle = configuration.getInt("mysql.minimum-idle")
-            connectionTimeout = configuration.getLong("mysql.connection-timeout")
-            idleTimeout = configuration.getLong("mysql.idle-timeout")
-            maxLifetime = configuration.getLong("mysql.maximum-lifetime")
+            jdbcUrl = configuration.getString("residence.url")
+            maximumPoolSize = configuration.getInt("residence.maximum-pool-size")
+            minimumIdle = configuration.getInt("residence.minimum-idle")
+            connectionTimeout = configuration.getLong("residence.connection-timeout")
+            idleTimeout = configuration.getLong("residence.idle-timeout")
+            maxLifetime = configuration.getLong("residence.maximum-lifetime")
         }
         dataSource = HikariDataSource(hikariConfig)
         
-        tablePrefix = configuration.getString("mysql.table-prefix")!!
+        tablePrefix = configuration.getString("residence.table-prefix")!!
         
         createTable()
     }

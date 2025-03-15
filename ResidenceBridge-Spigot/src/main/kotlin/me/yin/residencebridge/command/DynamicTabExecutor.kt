@@ -45,10 +45,9 @@ object DynamicTabExecutor : TabExecutor {
             arguments.size == 2 -> {
                 if (arguments[0] == "list") {
                     ListResidence.dynamic(sender, arguments[1])
-                } else
-                    if (arguments[0] == "teleport") {
-                        Teleport.dynamic(sender, arguments[1])
-                    }
+                } else if (arguments[0] == "teleport") {
+                    Teleport.dynamic(sender, arguments[1])
+                }
             }
         }
         return true
@@ -74,12 +73,11 @@ object DynamicTabExecutor : TabExecutor {
                         }
                     }
                     return list
-                } else
-                    if (arguments[0] == "teleport") {
-                        val player = sender as? Player ?: return emptyList()
-                        val names = ResidenceMySQL.selectOwnerResidenceNames(player.uniqueId)
-                        return prune(arguments[1], names)
-                    }
+                } else if (arguments[0] == "teleport") {
+                    val player = sender as? Player ?: return emptyList()
+                    val names = ResidenceMySQL.selectOwnerResidenceNames(player.uniqueId)
+                    return prune(arguments[1], names)
+                }
             }
         }
         return emptyList()
