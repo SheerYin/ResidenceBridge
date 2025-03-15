@@ -10,4 +10,7 @@ velocity 构建:
   - 执行 gradle ResidenceBridge-Velocity:build
   - 或 gradle ResidenceBridge-Velocity:shadowJar
 
+全部构建:
+  - 执行 gradle build
+
 构建完成的 jar 在各个目录的 build/libs
