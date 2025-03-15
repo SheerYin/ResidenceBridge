@@ -46,7 +46,7 @@ bukkitPluginYaml {
     // softDepend.add("PlaceholderAPI")
     prefix = "领地桥接"
     libraries = listOf(
-        "org.jetbrains.kotlin:kotlin-stdlib:2.1.0",
+        "org.jetbrains.kotlin:kotlin-stdlib:2.1.10",
         "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.1",
         "com.zaxxer:HikariCP:6.2.1"
     )

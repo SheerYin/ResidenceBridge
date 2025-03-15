@@ -1,4 +1,4 @@
-package me.yin.residencebridge.listeners
+package me.yin.residencebridge.listener
 
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority

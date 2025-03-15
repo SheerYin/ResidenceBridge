@@ -1,7 +1,7 @@
-package me.yin.residencebridge.commands
+package me.yin.residencebridge.command
 
 import me.yin.residencebridge.ResidenceBridge
-import me.yin.residencebridge.commands.dynamic.*
+import me.yin.residencebridge.command.dynamic.*
 import me.yin.residencebridge.persistence.ResidenceMySQL
 import org.bukkit.Bukkit
 import org.bukkit.command.Command

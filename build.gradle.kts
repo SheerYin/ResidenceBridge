@@ -1,5 +1,5 @@
 plugins {
-    kotlin("jvm") version "2.1.0"
+    kotlin("jvm") version "2.1.10"
 }
 
 group = "me.yin"
@@ -14,9 +14,19 @@ subprojects {
     repositories {
         mavenLocal()
         mavenCentral()
+
+        // layout.buildDirectory.set(file("${rootProject.projectDir}/build/${project.name}"))
     }
 }
 
-tasks.getByName("jar").enabled = false
-tasks.getByName("assemble").enabled = false
-tasks.getByName("build").enabled = false
+tasks {
+    jar {
+        enabled = false
+    }
+    assemble {
+        enabled = false
+    }
+    build {
+        enabled = false
+    }
+}

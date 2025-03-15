@@ -1,4 +1,4 @@
-package me.yin.residencebridge.listeners.residence
+package me.yin.residencebridge.listener.residence
 
 import com.bekvon.bukkit.residence.event.ResidenceFlagChangeEvent
 import com.bekvon.bukkit.residence.event.ResidenceFlagEvent.FlagType

@@ -1,7 +1,7 @@
-package me.yin.residencebridge.commands.dynamic
+package me.yin.residencebridge.command.dynamic
 
 import me.yin.residencebridge.ResidenceBridge
-import me.yin.residencebridge.commands.DynamicTabExecutor
+import me.yin.residencebridge.command.DynamicTabExecutor
 import org.bukkit.command.CommandSender
 
 object Help {

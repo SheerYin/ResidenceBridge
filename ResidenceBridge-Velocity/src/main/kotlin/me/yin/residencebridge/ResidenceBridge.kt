@@ -1,6 +1,5 @@
 package me.yin.residencebridge
 
-import com.google.gson.GsonBuilder
 import com.google.inject.Inject
 import com.velocitypowered.api.event.Subscribe
 import com.velocitypowered.api.event.connection.PluginMessageEvent
@@ -14,10 +13,6 @@ import com.velocitypowered.api.proxy.messages.MinecraftChannelIdentifier
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.TextComponent
 import net.kyori.adventure.text.format.NamedTextColor
-import net.kyori.adventure.text.minimessage.MiniMessage
-import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer
-import net.kyori.adventure.text.serializer.json.JSONComponentSerializer
-import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.DataInputStream
@@ -25,7 +20,11 @@ import java.io.DataOutputStream
 import java.nio.file.Path
 import java.util.concurrent.TimeUnit
 
-class ResidenceBridge @Inject constructor(val proxy: ProxyServer, @DataDirectory val dataDirectory: Path, val pluginContainer: PluginContainer) {
+class ResidenceBridge @Inject constructor(
+    val proxy: ProxyServer,
+    @DataDirectory val dataDirectory: Path,
+    val pluginContainer: PluginContainer
+) {
 
     init {
         instance = this
@@ -68,25 +67,6 @@ class ResidenceBridge @Inject constructor(val proxy: ProxyServer, @DataDirectory
 
     @Subscribe
     fun onProxyInitialize(event: ProxyInitializeEvent) {
-
-//        val a = MiniMessage.miniMessage().deserialize("<white>[<gray>prefix</gray>]</white>")
-//        val a1 = a.append(Component.text().content(" a text").color(NamedTextColor.GOLD).append(Component.text(" b text", NamedTextColor.RED)))
-//        val aJson = GsonComponentSerializer.gson().serializer().toJson(a1)
-//        proxy.sendMessage(Component.text(aJson))
-//        proxy.sendMessage(a1)
-//
-//        proxy.sendMessage(Component.text(""))
-//
-//        val b = Component.text().color(NamedTextColor.WHITE)
-//            .append(Component.text("["))
-//            .append(Component.text("prefix", NamedTextColor.GRAY))
-//            .append(Component.text("]"))
-//        val b1 = b.append(Component.text(" a text", NamedTextColor.GOLD)).append(Component.text(" b text", NamedTextColor.RED)).build()
-//        val bJson = GsonComponentSerializer.gson().serializer().toJson(b1)
-//        proxy.sendMessage(Component.text(bJson))
-//        proxy.sendMessage(b1)
-
-
         proxy.sendMessage(getPrefixComponent().append(Component.text(" 插件开始加载 $pluginVersion")).build())
         proxy.channelRegistrar.register(pluginChannel)
     }

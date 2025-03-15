@@ -1,8 +1,8 @@
-package me.yin.residencebridge.commands.dynamic
+package me.yin.residencebridge.command.dynamic
 
 import kotlinx.coroutines.launch
 import me.yin.residencebridge.ResidenceBridge
-import me.yin.residencebridge.commands.DynamicTabExecutor
+import me.yin.residencebridge.command.DynamicTabExecutor
 import me.yin.residencebridge.persistence.ResidenceMySQL
 import org.bukkit.command.CommandSender
 

@@ -1,4 +1,4 @@
-package me.yin.residencebridge.listeners
+package me.yin.residencebridge.listener
 
 import kotlinx.coroutines.launch
 import me.yin.residencebridge.ResidenceBridge

@@ -2,12 +2,12 @@ package me.yin.residencebridge
 
 import com.bekvon.bukkit.residence.Residence
 import kotlinx.coroutines.*
-import me.yin.residencebridge.commands.DynamicTabExecutor
+import me.yin.residencebridge.command.DynamicTabExecutor
 import me.yin.residencebridge.configuration.ConfigurationYAML
 import me.yin.residencebridge.configuration.ResidenceYAML
-import me.yin.residencebridge.listeners.PlayerJoin
-import me.yin.residencebridge.listeners.ReceivePluginMessage
-import me.yin.residencebridge.listeners.residence.*
+import me.yin.residencebridge.listener.PlayerJoin
+import me.yin.residencebridge.listener.ReceivePluginMessage
+import me.yin.residencebridge.listener.residence.*
 import me.yin.residencebridge.persistence.ResidenceMySQL
 import me.yin.residencebridge.provider.register.ResidenceBridgeExpansion
 import me.yin.residencebridge.provider.register.ResidenceProviderRegister

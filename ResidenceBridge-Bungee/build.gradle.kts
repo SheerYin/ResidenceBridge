@@ -29,24 +29,26 @@ dependencies {
 
 val pluginAuthor = "尹"
 val pluginLibraries = listOf(
-    "org.jetbrains.kotlin:kotlin-stdlib:2.1.0",
+    "org.jetbrains.kotlin:kotlin-stdlib:2.1.10",
     "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.1"
 )
-tasks.named<ProcessResources>("processResources") {
-    filesMatching("bungee.yml") {
-        expand(
-            mapOf(
-                "rootName" to rootName,
-                "group" to project.group.toString(),
-                "pluginVersion" to project.version.toString(),
-                "pluginAuthor" to pluginAuthor,
-                "pluginLibraries" to pluginLibraries.joinToString("") { "\n  - \"$it\"" }
-            )
-        )
-    }
-}
 
-tasks.jar {
-    archiveFileName.set("$rootName-Bungee.jar")
+tasks {
+    processResources {
+        filesMatching("bungee.yml") {
+            expand(
+                mapOf(
+                    "rootName" to rootName,
+                    "group" to project.group.toString(),
+                    "pluginVersion" to project.version.toString(),
+                    "pluginAuthor" to pluginAuthor,
+                    "pluginLibraries" to pluginLibraries.joinToString("") { "\n  - \"$it\"" }
+                )
+            )
+        }
+    }
+    jar {
+        archiveFileName.set("${project.name}.jar")
+    }
 }
 
