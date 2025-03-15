@@ -33,7 +33,7 @@ dependencies {
     implementation("com.zaxxer:HikariCP:6.2.1")
 
     compileOnly("me.clip:placeholderapi:2.11.6")
-    compileOnly(files("${rootProject.projectDir}/libraries/Residence.jar"))
+    compileOnly(files("${project.projectDir}/libraries/Residence.jar"))
 }
 
 bukkitPluginYaml {
