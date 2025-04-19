@@ -1,15 +1,15 @@
 package me.yin.residencebridge.service
 
-import com.bekvon.bukkit.residence.protection.ClaimedResidence
 import me.yin.residencebridge.ResidenceBridge
+import org.bukkit.Location
 import org.bukkit.entity.Player
 import java.io.ByteArrayOutputStream
 import java.io.DataOutputStream
 
 object ResidenceTeleport {
 
-    fun local(player: Player, claimedResidence: ClaimedResidence) {
-        player.teleport(claimedResidence.getTeleportLocation(player, true))
+    fun local(player: Player, location: Location) {
+        player.teleport(location)
     }
 
     fun global(player: Player, residenceName: String, serverName: String) {

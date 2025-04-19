@@ -3,9 +3,9 @@ package me.yin.residencebridge.listener.residence
 import com.bekvon.bukkit.residence.event.ResidenceCommandEvent
 import kotlinx.coroutines.launch
 import me.yin.residencebridge.ResidenceBridge
+import me.yin.residencebridge.persistence.ResidenceMySQL
 import me.yin.residencebridge.provider.register.ResidenceProviderRegister
 import me.yin.residencebridge.service.ResidenceTeleport
-import me.yin.residencebridge.persistence.ResidenceMySQL
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener

@@ -1,6 +1,6 @@
 residence:
-  # jdbc:mysql://<用户名>:<密码>@<主机>:<端口>/<数据库名>
-  url: 'jdbc:mysql://root:password@localhost:3306/database'
+  # jdbc:mysql://<主机>:<端口>/<数据库名>?user=<用户名>&password=<密码>
+  url: 'jdbc:mysql://localhost:3306/database?user=root&password=password'
   # 连接池的最大大小，默认建议值 10
   maximum-pool-size: 10
   # 连接池中的最小空闲连接数，默认建议与最大连接数相同

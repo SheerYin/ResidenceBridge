@@ -3,10 +3,9 @@ package me.yin.residencebridge.command.dynamic
 import kotlinx.coroutines.launch
 import me.yin.residencebridge.ResidenceBridge
 import me.yin.residencebridge.command.DynamicTabExecutor
+import me.yin.residencebridge.persistence.ResidenceMySQL
 import me.yin.residencebridge.provider.register.ResidenceProviderRegister
 import me.yin.residencebridge.service.ResidenceTeleport
-import me.yin.residencebridge.persistence.ResidenceMySQL
-import org.bukkit.Bukkit
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
@@ -29,7 +28,7 @@ object Teleport {
         if (residenceInstance != null) {
             val claimedResidence = residenceInstance.residenceManager.getByName(residenceName)
             if (claimedResidence != null) {
-                ResidenceTeleport.local(player, claimedResidence)
+                ResidenceTeleport.local(player, claimedResidence.getTeleportLocation(player, true))
                 return
             }
         }

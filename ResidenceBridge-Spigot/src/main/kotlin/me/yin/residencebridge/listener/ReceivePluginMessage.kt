@@ -1,6 +1,5 @@
 package me.yin.residencebridge.listener
 
-import kotlinx.coroutines.launch
 import me.yin.residencebridge.ResidenceBridge
 import me.yin.residencebridge.provider.register.ResidenceProviderRegister
 import me.yin.residencebridge.service.ResidenceTeleport
@@ -38,7 +37,7 @@ object ReceivePluginMessage : PluginMessageListener {
             if (residenceInstance != null) {
                 val claimedResidence = residenceInstance.residenceManager.getByName(residenceName)
                 if (claimedResidence != null) {
-                    ResidenceTeleport.local(target, claimedResidence)
+                    ResidenceTeleport.local(target, claimedResidence.getTeleportLocation(player, true))
                 }
             }
         }

@@ -4,9 +4,8 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
-import me.yin.residencebridge.ResidenceBridge
-import me.yin.residencebridge.model.ResidenceInfo
 import me.yin.residencebridge.configuration.DatabaseYAML
+import me.yin.residencebridge.model.ResidenceInfo
 import java.sql.Connection
 import java.sql.SQLException
 import java.util.*
@@ -30,15 +29,15 @@ object ResidenceMySQL {
             maxLifetime = configuration.getLong("residence.maximum-lifetime")
         }
         dataSource = HikariDataSource(hikariConfig)
-        
+
         tablePrefix = configuration.getString("residence.table-prefix")!!
-        
+
         createTable()
     }
-    
+
     lateinit var table: String
     fun createTable() {
-        table = tablePrefix + ResidenceBridge.lowercaseName
+        table = tablePrefix + "residence"
         val sql = """
         CREATE TABLE IF NOT EXISTS $table (
             id INT AUTO_INCREMENT PRIMARY KEY,

@@ -5,8 +5,8 @@ import me.yin.residencebridge.ResidenceBridge
 import me.yin.residencebridge.command.DynamicTabExecutor
 import me.yin.residencebridge.configuration.ConfigurationYAML
 import me.yin.residencebridge.model.ResidenceInfo
-import me.yin.residencebridge.provider.register.ResidenceProviderRegister
 import me.yin.residencebridge.persistence.ResidenceMySQL
+import me.yin.residencebridge.provider.register.ResidenceProviderRegister
 import org.bukkit.command.CommandSender
 
 object ImportResidence {

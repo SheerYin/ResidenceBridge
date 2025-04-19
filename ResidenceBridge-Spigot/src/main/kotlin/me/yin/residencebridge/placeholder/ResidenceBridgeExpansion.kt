@@ -40,6 +40,7 @@ class ResidenceBridgeExpansion(plugin: Plugin) : PlaceholderExpansion() {
                 }
                 return residenceInstance.playerManager.getMaxResidences(player.name).toString()
             }
+
             else -> {
                 return null
             }
