@@ -7,8 +7,7 @@ bungee 构建:
   - 执行 gradle ResidenceBridge-Bungee:build
 
 velocity 构建:
-  - 执行 gradle ResidenceBridge-Velocity:build
-  - 或 gradle ResidenceBridge-Velocity:shadowJar
+  - 执行 gradle ResidenceBridge-Velocity:shadowJar
 
 全部构建:
   - 执行 gradle build

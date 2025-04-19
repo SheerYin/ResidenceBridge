@@ -112,18 +112,20 @@ class ResidenceBridge @Inject constructor(
                 proxy.sendMessage(getPrefixComponent().append(Component.text(" $serverName 服务器不存在")).build())
                 return
             }
-            player.createConnectionRequest(registeredServer).fireAndForget()
 
-            val byteArrayOutputStream = ByteArrayOutputStream()
-            DataOutputStream(byteArrayOutputStream).use { output ->
-                output.writeUTF("teleport")
-                output.writeUTF(player.username)
-                output.writeUTF(residenceName)
+            val connect = player.createConnectionRequest(registeredServer).connect()
+            connect.thenAccept { connectResult ->
+                if (connectResult.isSuccessful) {
+                    val byteArrayOutputStream = ByteArrayOutputStream()
+                    DataOutputStream(byteArrayOutputStream).use { output ->
+                        output.writeUTF("teleport")
+                        output.writeUTF(player.username)
+                        output.writeUTF(residenceName)
+                    }
+                    registeredServer.sendPluginMessage(pluginChannel, byteArrayOutputStream.toByteArray())
+                }
             }
 
-            proxyServer.scheduler.buildTask(this, Runnable {
-                registeredServer.sendPluginMessage(pluginChannel, byteArrayOutputStream.toByteArray())
-            }).delay(1000L, TimeUnit.MILLISECONDS).schedule()
         }
 
     }

@@ -26,20 +26,15 @@ object Teleport {
         }
 
         val residenceInstance = ResidenceProviderRegister.residence
-        if (residenceInstance == null) {
-            sender.sendMessage("${ResidenceBridge.pluginPrefix} 未安装 Residence")
-            return
+        if (residenceInstance != null) {
+            val claimedResidence = residenceInstance.residenceManager.getByName(residenceName)
+            if (claimedResidence != null) {
+                ResidenceTeleport.local(player, claimedResidence)
+                return
+            }
         }
 
         ResidenceBridge.scope.launch {
-            val claimedResidence = residenceInstance.residenceManager.getByName(residenceName)
-            if (claimedResidence != null) {
-                Bukkit.getScheduler().runTask(ResidenceBridge.instance, Runnable {
-                    ResidenceTeleport.local(player, claimedResidence)
-                })
-                return@launch // 本地存在领地
-            }
-
             val residenceInfo = ResidenceMySQL.selectResidence(residenceName)
             if (residenceInfo == null) {
                 player.sendMessage("${ResidenceBridge.pluginPrefix} 领地不存在")

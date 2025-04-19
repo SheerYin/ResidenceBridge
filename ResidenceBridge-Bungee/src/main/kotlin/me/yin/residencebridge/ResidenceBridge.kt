@@ -98,18 +98,20 @@ class ResidenceBridge : Plugin(), Listener {
                 return
             }
             proxiedPlayer.connect(serverInfo)
-
-            val byteArrayOutputStream = ByteArrayOutputStream()
-            DataOutputStream(byteArrayOutputStream).use { output ->
-                output.writeUTF("teleport")
-                output.writeUTF(proxiedPlayer.name)
-                output.writeUTF(residenceName)
+            proxiedPlayer.connect(serverInfo) { successful, throwable ->
+                if (successful) {
+                    val byteArrayOutputStream = ByteArrayOutputStream()
+                    DataOutputStream(byteArrayOutputStream).use { output ->
+                        output.writeUTF("teleport")
+                        output.writeUTF(proxiedPlayer.name)
+                        output.writeUTF(residenceName)
+                    }
+                    serverInfo.sendData(pluginChannel, byteArrayOutputStream.toByteArray())
+                }
             }
 
-            scope.launch {
-                delay(1000L)
-                serverInfo.sendData(pluginChannel, byteArrayOutputStream.toByteArray())
-            }
+
+
         }
     }
 

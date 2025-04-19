@@ -35,17 +35,10 @@ object ReceivePluginMessage : PluginMessageListener {
             }
 
             val residenceInstance = ResidenceProviderRegister.residence
-            if (residenceInstance == null) {
-                // 没装 residence
-                return
-            }
-
-            ResidenceBridge.scope.launch {
+            if (residenceInstance != null) {
                 val claimedResidence = residenceInstance.residenceManager.getByName(residenceName)
                 if (claimedResidence != null) {
-                    Bukkit.getScheduler().runTask(ResidenceBridge.instance, Runnable {
-                        ResidenceTeleport.local(player, claimedResidence)
-                    })
+                    ResidenceTeleport.local(target, claimedResidence)
                 }
             }
         }

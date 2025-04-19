@@ -7,10 +7,8 @@ plugins {
     id("xyz.jpenilla.resource-factory-bukkit-convention") version "1.2.0"
 }
 
-val rootName = rootProject.name
-val lowercaseName = rootName.lowercase()
-group = "${rootProject.group}.${lowercaseName}"
-version = SimpleDateFormat("yyyy.MM.dd").format(Date()) + "-SNAPSHOT"
+group = "me.yin"
+version = "1.0.0"
 
 repositories {
     maven("https://oss.sonatype.org/content/repositories/snapshots")
@@ -36,11 +34,27 @@ dependencies {
     compileOnly(files("${project.projectDir}/libraries/Residence.jar"))
 }
 
+
+var minecraftPluginName: String
+var minecraftPluginLowercaseName: String
+var minecraftPluginGroup: String
+if (project == rootProject) {
+    minecraftPluginName = project.name
+    minecraftPluginLowercaseName = minecraftPluginName.lowercase()
+    minecraftPluginGroup = "${project.group}.$minecraftPluginLowercaseName"
+} else {
+    minecraftPluginName = rootProject.name
+    minecraftPluginLowercaseName = minecraftPluginName.lowercase()
+    minecraftPluginGroup = "${rootProject.group}.$minecraftPluginLowercaseName"
+}
+val minecraftPluginVersion: String = SimpleDateFormat("yyyy.MM.dd").format(Date()) + "-SNAPSHOT"
+
+
 bukkitPluginYaml {
     apiVersion = "1.16"
-    name = rootName
-    version = project.version.toString()
-    main = "${project.group}.${rootName}"
+    name = minecraftPluginName
+    version = minecraftPluginVersion
+    main = "${minecraftPluginGroup}.${minecraftPluginName}"
     authors.add("尹")
     softDepend.addAll("Residence", "PlaceholderAPI")
     prefix = "领地桥接"
@@ -50,10 +64,10 @@ bukkitPluginYaml {
         "com.zaxxer:HikariCP:6.2.1"
     )
 
-    val label = "${lowercaseName}.command"
+    val label = "${minecraftPluginLowercaseName}.command"
     commands {
-        register(lowercaseName) {
-            aliases = listOf(lowercaseName, "rb")
+        register(minecraftPluginLowercaseName) {
+            aliases = listOf(minecraftPluginLowercaseName, "rb")
             permission = label
         }
     }
