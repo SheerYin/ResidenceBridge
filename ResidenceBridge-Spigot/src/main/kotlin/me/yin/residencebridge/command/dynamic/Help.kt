@@ -16,7 +16,7 @@ object Help {
         sender.sendMessage("${ResidenceBridge.pluginPrefix} 主命令 /residencebridge 缩写 /rb")
         sender.sendMessage("${ResidenceBridge.pluginPrefix} 领地列表 /rb list [玩家]")
         sender.sendMessage("${ResidenceBridge.pluginPrefix} 所有列表 /rb listall")
-        sender.sendMessage("${ResidenceBridge.pluginPrefix} 传送领地 /rb teleport <领地>")
+        sender.sendMessage("${ResidenceBridge.pluginPrefix} 传送领地 /rb teleport <领地> [玩家]")
 
         sender.sendMessage("${ResidenceBridge.pluginPrefix} 导入数据 /rb import")
 

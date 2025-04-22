@@ -7,7 +7,6 @@ import org.bukkit.Bukkit
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.command.TabExecutor
-import org.bukkit.entity.Player
 
 object DynamicTabExecutor : TabExecutor {
 
@@ -49,6 +48,12 @@ object DynamicTabExecutor : TabExecutor {
                     Teleport.dynamic(sender, arguments[1])
                 }
             }
+
+            arguments.size == 3 -> {
+                if (arguments[0] == "teleport") {
+                    Teleport.dynamic(sender, arguments[1], arguments[2])
+                }
+            }
         }
         return true
     }
@@ -74,9 +79,25 @@ object DynamicTabExecutor : TabExecutor {
                     }
                     return list
                 } else if (arguments[0] == "teleport") {
-                    val player = sender as? Player ?: return emptyList()
-                    val names = ResidenceMySQL.selectOwnerResidenceNames(player.uniqueId)
+                    val names = ResidenceMySQL.selectResidenceNames()
                     return prune(arguments[1], names)
+                }
+            }
+
+            3 -> {
+                if (arguments[0] == "teleport") {
+                    val argument = arguments[2]
+                    val empty = argument.isEmpty()
+                    val list = mutableListOf<String>()
+                    for (player in Bukkit.getOnlinePlayers()) {
+                        val playerName = player.name
+                        if (empty) {
+                            list.add(playerName)
+                        } else if (playerName.startsWith(argument, true)) {
+                            list.add(playerName)
+                        }
+                    }
+                    return list
                 }
             }
         }

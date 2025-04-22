@@ -6,6 +6,7 @@ import me.yin.residencebridge.command.DynamicTabExecutor
 import me.yin.residencebridge.persistence.ResidenceMySQL
 import me.yin.residencebridge.provider.register.ResidenceProviderRegister
 import me.yin.residencebridge.service.ResidenceTeleport
+import org.bukkit.Bukkit
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
@@ -48,5 +49,33 @@ object Teleport {
             }
         }
     }
+
+    fun dynamic(sender: CommandSender, residenceName: String, target: String) {
+        val targetPlayer = Bukkit.getPlayer(target)
+        if (targetPlayer == null) {
+            sender.sendMessage("${ResidenceBridge.pluginPrefix} 玩家不存在")
+            return
+        }
+
+        val residenceInstance = ResidenceProviderRegister.residence
+        if (residenceInstance != null) {
+            val claimedResidence = residenceInstance.residenceManager.getByName(residenceName)
+            if (claimedResidence != null) {
+                ResidenceTeleport.local(targetPlayer, claimedResidence.getTeleportLocation(targetPlayer, true))
+                return
+            }
+        }
+
+        ResidenceBridge.scope.launch {
+            val residenceInfo = ResidenceMySQL.selectResidence(residenceName)
+            if (residenceInfo == null) {
+                sender.sendMessage("${ResidenceBridge.pluginPrefix} 领地不存在")
+                return@launch
+            }
+            ResidenceTeleport.global(targetPlayer, residenceName, residenceInfo.serverName)
+        }
+    }
+
+
 
 }

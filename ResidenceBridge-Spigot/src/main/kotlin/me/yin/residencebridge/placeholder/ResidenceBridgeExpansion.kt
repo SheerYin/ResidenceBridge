@@ -28,15 +28,35 @@ class ResidenceBridgeExpansion(plugin: Plugin) : PlaceholderExpansion() {
     override fun onRequest(offlinePlayer: OfflinePlayer, parameters: String): String? {
         val player = (offlinePlayer.player) ?: return null
         when {
-            parameters.equals("amount", ignoreCase = true) -> {
+            parameters.startsWith("names", ignoreCase = true) -> {
+                val names = ResidenceMySQL.selectOwnerResidenceNames(player.name)
+                if (names.isEmpty()) {
+                    return null
+                }
+                return names.joinToString(",")
+            }
+
+            parameters.startsWith("infos", ignoreCase = true) -> {
+                val residenceInfos = ResidenceMySQL.selectOwnerResidences(player.name)
+                val list = mutableListOf<String>()
+                for (residenceInfo in residenceInfos) {
+                    list.add(residenceInfo.residenceName + ":" + residenceInfo.serverName)
+                }
+                if (list.isEmpty()) {
+                    return null
+                }
+                return list.joinToString(",")
+            }
+
+            parameters.startsWith("amount", ignoreCase = true) -> {
                 val amount = ResidenceMySQL.selectOwnerResidencesCount(player.uniqueId)
                 return amount.toString()
             }
 
-            parameters.equals("maximum", ignoreCase = true) -> {
+            parameters.startsWith("maximum", ignoreCase = true) -> {
                 val residenceInstance = ResidenceProviderRegister.residence
                 if (residenceInstance == null) {
-                    return ""
+                    return null
                 }
                 return residenceInstance.playerManager.getMaxResidences(player.name).toString()
             }
