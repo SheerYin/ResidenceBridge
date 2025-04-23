@@ -97,7 +97,6 @@ class ResidenceBridge : Plugin(), Listener {
                 proxy.console.sendMessage(TextComponent("$pluginPrefix 服务器 $serverName 不存在"))
                 return
             }
-            proxiedPlayer.connect(serverInfo)
             proxiedPlayer.connect(serverInfo) { successful, throwable ->
                 if (successful) {
                     val byteArrayOutputStream = ByteArrayOutputStream()

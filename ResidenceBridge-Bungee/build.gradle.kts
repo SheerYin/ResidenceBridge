@@ -50,7 +50,7 @@ tasks {
             val targetFile = layout.buildDirectory.file("resources/main/bungee.yml").get().asFile
 
             val text = """name: $minecraftPluginName
-main: $minecraftPluginGroup.$minecraftPluginLowercaseName
+main: $minecraftPluginGroup.$minecraftPluginName
 version: "$minecraftPluginVersion"
 author: ${minecraftPluginAuthors.joinToString("") { "\n  - $it" }}
 libraries: ${minecraftPluginLibraries.joinToString("") { "\n  - $it" }}"""
