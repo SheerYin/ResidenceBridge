@@ -3,7 +3,7 @@ package me.yin.residencebridge.listener.residence
 import com.bekvon.bukkit.residence.event.ResidenceCommandEvent
 import kotlinx.coroutines.launch
 import me.yin.residencebridge.ResidenceBridge
-import me.yin.residencebridge.persistence.ResidenceMySQL
+import me.yin.residencebridge.persistence.MySqlResidenceRepository
 import me.yin.residencebridge.provider.register.ResidenceProviderRegister
 import me.yin.residencebridge.service.ResidenceTeleport
 import org.bukkit.entity.Player
@@ -27,7 +27,7 @@ object ResidenceCommand : Listener {
                         event.isCancelled = true
 
                         ResidenceBridge.scope.launch {
-                            val names = ResidenceMySQL.selectOwnerResidenceNames(player.uniqueId)
+                            val names = MySqlResidenceRepository.selectOwnerResidenceNames(player.uniqueId)
                             player.sendMessage("${ResidenceBridge.pluginPrefix} 玩家 §2${player.name}§f 领地列表")
                             for (name in names) {
                                 player.sendMessage("${ResidenceBridge.pluginPrefix} 领地 $name")
@@ -47,7 +47,7 @@ object ResidenceCommand : Listener {
                             event.isCancelled = true
 
                             ResidenceBridge.scope.launch {
-                                val residenceInfo = ResidenceMySQL.selectResidence(residenceName)
+                                val residenceInfo = MySqlResidenceRepository.selectResidence(residenceName)
                                 if (residenceInfo == null) {
                                     player.sendMessage("${ResidenceBridge.pluginPrefix} 领地不存在")
                                     return@launch
@@ -63,12 +63,12 @@ object ResidenceCommand : Listener {
                         }
 
                         arguments[0].lowercase() == "create" -> {
-                            if (ResidenceMySQL.isResidenceExists(arguments[1])) {
+                            if (MySqlResidenceRepository.isResidenceExists(arguments[1])) {
                                 player.sendMessage("${ResidenceBridge.pluginPrefix} 领地重名")
                                 event.isCancelled = true
                             } else {
                                 val maximum = ResidenceProviderRegister.residence!!.playerManager.getMaxResidences(player.name)
-                                val amount = ResidenceMySQL.selectOwnerResidencesCount(player.uniqueId) ?: 0
+                                val amount = MySqlResidenceRepository.selectOwnerResidencesCount(player.uniqueId) ?: 0
                                 if (amount >= maximum) {
                                     player.sendMessage("${ResidenceBridge.pluginPrefix} 创建领地已达上限 $amount / $maximum")
                                     event.isCancelled = true
@@ -81,7 +81,7 @@ object ResidenceCommand : Listener {
         } else if (command == "resadmin") {
             // 防管理员
             if (arguments.size == 2 && arguments[0] == "create") {
-                if (ResidenceMySQL.isResidenceExists(arguments[1])) {
+                if (MySqlResidenceRepository.isResidenceExists(arguments[1])) {
                     player.sendMessage("${ResidenceBridge.pluginPrefix} 领地重名")
                     event.isCancelled = true
                 }

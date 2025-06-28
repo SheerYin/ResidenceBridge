@@ -3,14 +3,15 @@ package me.yin.residencebridge
 import com.bekvon.bukkit.residence.Residence
 import kotlinx.coroutines.*
 import me.yin.residencebridge.command.DynamicTabExecutor
-import me.yin.residencebridge.configuration.ConfigurationYAML
-import me.yin.residencebridge.configuration.DatabaseYAML
+import me.yin.residencebridge.infrastructure.configuration.ConfigurationYAML
+import me.yin.residencebridge.infrastructure.configuration.DatabaseYAML
 import me.yin.residencebridge.listener.PlayerJoin
 import me.yin.residencebridge.listener.ReceivePluginMessage
 import me.yin.residencebridge.listener.residence.*
-import me.yin.residencebridge.persistence.ResidenceMySQL
+import me.yin.residencebridge.persistence.MySqlResidenceRepository
 import me.yin.residencebridge.placeholder.ResidenceBridgeExpansion
 import me.yin.residencebridge.provider.register.ResidenceProviderRegister
+import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.plugin.java.JavaPlugin
 
 class ResidenceBridge : JavaPlugin() {
@@ -59,7 +60,7 @@ class ResidenceBridge : JavaPlugin() {
         DatabaseYAML.initialize()
         DatabaseYAML.load()
 
-        ResidenceMySQL.initialize()
+        MySqlResidenceRepository.initialize()
 
         server.messenger.registerOutgoingPluginChannel(this, pluginChannel)
         server.messenger.registerIncomingPluginChannel(this, pluginChannel, ReceivePluginMessage)
@@ -94,7 +95,7 @@ class ResidenceBridge : JavaPlugin() {
             }
         }
 
-        ResidenceMySQL.dataSource.close()
+        MySqlResidenceRepository.dataSource.close()
     }
 
     fun pluginDependencies() {

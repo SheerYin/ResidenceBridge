@@ -19,11 +19,7 @@ import java.io.DataInputStream
 import java.io.DataOutputStream
 import java.nio.file.Path
 
-class ResidenceBridge @Inject constructor(
-    val proxy: ProxyServer,
-    @DataDirectory val dataDirectory: Path,
-    val pluginContainer: PluginContainer
-) {
+class ResidenceBridge @Inject constructor(val proxy: ProxyServer, @DataDirectory val dataDirectory: Path, val pluginContainer: PluginContainer) {
 
     init {
         instance = this

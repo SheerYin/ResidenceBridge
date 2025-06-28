@@ -3,9 +3,9 @@ package me.yin.residencebridge.command.dynamic
 import kotlinx.coroutines.launch
 import me.yin.residencebridge.ResidenceBridge
 import me.yin.residencebridge.command.DynamicTabExecutor
-import me.yin.residencebridge.configuration.ConfigurationYAML
+import me.yin.residencebridge.infrastructure.configuration.ConfigurationYAML
 import me.yin.residencebridge.model.ResidenceInfo
-import me.yin.residencebridge.persistence.ResidenceMySQL
+import me.yin.residencebridge.persistence.MySqlResidenceRepository
 import me.yin.residencebridge.provider.register.ResidenceProviderRegister
 import org.bukkit.command.CommandSender
 
@@ -28,7 +28,7 @@ object ImportResidence {
             val map = residenceInstance.residenceManager.residences
 
             val localNames = mutableListOf<String>()
-            val globalNames = ResidenceMySQL.selectResidenceNames()
+            val globalNames = MySqlResidenceRepository.selectResidenceNames()
 
             val serverName = ConfigurationYAML.serverName
             val residenceInfos = mutableListOf<ResidenceInfo>()
@@ -56,7 +56,7 @@ object ImportResidence {
             }
 
             if (duplicates.isEmpty()) {
-                ResidenceMySQL.batchInsertResidences(residenceInfos)
+                MySqlResidenceRepository.batchInsertResidences(residenceInfos)
                 sender.sendMessage("${ResidenceBridge.pluginPrefix} 导入完成")
             } else {
                 sender.sendMessage("${ResidenceBridge.pluginPrefix} 数据库中已有重名领地 $duplicates")
@@ -92,7 +92,7 @@ object ImportResidence {
             )
         }
 
-        val globalResidenceInfos = ResidenceMySQL.selectResidences()
+        val globalResidenceInfos = MySqlResidenceRepository.selectResidences()
 
         val duplicates = mutableListOf<ResidenceInfo>()
         localResidenceInfos.forEach { localResidenceInfo ->

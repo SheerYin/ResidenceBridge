@@ -1,5 +1,6 @@
 plugins {
-    kotlin("jvm") version "2.1.10"
+    kotlin("jvm") version "2.2.0-RC3" apply false
+    id("com.github.johnrengelman.shadow") version "8.1.1" apply false
 }
 
 group = "me.yin"
@@ -16,17 +17,5 @@ subprojects {
         mavenCentral()
 
         // layout.buildDirectory.set(file("${rootProject.projectDir}/build/${project.name}"))
-    }
-}
-
-tasks {
-    jar {
-        enabled = false
-    }
-    assemble {
-        enabled = false
-    }
-    build {
-        enabled = false
     }
 }

@@ -3,7 +3,7 @@ package me.yin.residencebridge.command.dynamic
 import kotlinx.coroutines.launch
 import me.yin.residencebridge.ResidenceBridge
 import me.yin.residencebridge.command.DynamicTabExecutor
-import me.yin.residencebridge.persistence.ResidenceMySQL
+import me.yin.residencebridge.persistence.MySqlResidenceRepository
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
@@ -23,7 +23,7 @@ object ListResidence {
         }
 
         ResidenceBridge.scope.launch {
-            val names = ResidenceMySQL.selectOwnerResidenceNames(player.uniqueId)
+            val names = MySqlResidenceRepository.selectOwnerResidenceNames(player.uniqueId)
             player.sendMessage("${ResidenceBridge.pluginPrefix} 玩家 §2${player.name}§f 领地列表")
             for (name in names) {
                 player.sendMessage("${ResidenceBridge.pluginPrefix} 领地 $name")
@@ -38,7 +38,7 @@ object ListResidence {
         }
 
         ResidenceBridge.scope.launch {
-            val residenceInfos = ResidenceMySQL.selectOwnerResidences(targetName)
+            val residenceInfos = MySqlResidenceRepository.selectOwnerResidences(targetName)
             sender.sendMessage("${ResidenceBridge.pluginPrefix} 玩家 §2${targetName}§f 领地列表")
             for (residenceInfo in residenceInfos) {
                 sender.sendMessage("${ResidenceBridge.pluginPrefix} 领地 ${residenceInfo.residenceName} 位于 ${residenceInfo.serverName}")

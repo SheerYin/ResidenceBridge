@@ -2,7 +2,7 @@ package me.yin.residencebridge.command
 
 import me.yin.residencebridge.ResidenceBridge
 import me.yin.residencebridge.command.dynamic.*
-import me.yin.residencebridge.persistence.ResidenceMySQL
+import me.yin.residencebridge.persistence.MySqlResidenceRepository
 import org.bukkit.Bukkit
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
@@ -79,7 +79,7 @@ object DynamicTabExecutor : TabExecutor {
                     }
                     return list
                 } else if (arguments[0] == "teleport") {
-                    val names = ResidenceMySQL.selectResidenceNames()
+                    val names = MySqlResidenceRepository.selectResidenceNames()
                     return prune(arguments[1], names)
                 }
             }

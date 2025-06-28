@@ -3,7 +3,7 @@ package me.yin.residencebridge.listener.residence
 import com.bekvon.bukkit.residence.event.ResidenceOwnerChangeEvent
 import kotlinx.coroutines.launch
 import me.yin.residencebridge.ResidenceBridge
-import me.yin.residencebridge.persistence.ResidenceMySQL
+import me.yin.residencebridge.persistence.MySqlResidenceRepository
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import java.util.*
@@ -21,7 +21,7 @@ object ResidenceOwnerChange : Listener {
         val owner = event.newOwner
 
         ResidenceBridge.scope.launch {
-            ResidenceMySQL.updateResidenceOwner(residenceName, ownerUUID, owner)
+            MySqlResidenceRepository.updateResidenceOwner(residenceName, ownerUUID, owner)
         }
     }
 

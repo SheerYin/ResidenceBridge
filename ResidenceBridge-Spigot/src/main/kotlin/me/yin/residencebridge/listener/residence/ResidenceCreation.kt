@@ -3,9 +3,9 @@ package me.yin.residencebridge.listener.residence
 import com.bekvon.bukkit.residence.event.ResidenceCreationEvent
 import kotlinx.coroutines.launch
 import me.yin.residencebridge.ResidenceBridge
-import me.yin.residencebridge.configuration.ConfigurationYAML
+import me.yin.residencebridge.infrastructure.configuration.ConfigurationYAML
 import me.yin.residencebridge.model.ResidenceInfo
-import me.yin.residencebridge.persistence.ResidenceMySQL
+import me.yin.residencebridge.persistence.MySqlResidenceRepository
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 
@@ -23,10 +23,11 @@ object ResidenceCreation : Listener {
         val owner = residence.owner
         val permissions = residence.permissions
 
-//        if (ResidenceStorage.isResidenceExists(residenceName)) {
-//            event.isCancelled = true
-//            return
-//        }
+        // 双重防御
+        if (MySqlResidenceRepository.isResidenceExists(residenceName)) {
+            event.isCancelled = true
+            return
+        }
 
         ResidenceBridge.scope.launch {
             val residenceInfo = ResidenceInfo(
@@ -37,7 +38,7 @@ object ResidenceCreation : Listener {
                 permissions.playerFlags,
                 ConfigurationYAML.serverName
             )
-            ResidenceMySQL.insertResidence(residenceInfo)
+            MySqlResidenceRepository.insertResidence(residenceInfo)
         }
     }
 

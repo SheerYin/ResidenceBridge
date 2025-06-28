@@ -3,7 +3,7 @@ package me.yin.residencebridge.command.dynamic
 import kotlinx.coroutines.launch
 import me.yin.residencebridge.ResidenceBridge
 import me.yin.residencebridge.command.DynamicTabExecutor
-import me.yin.residencebridge.persistence.ResidenceMySQL
+import me.yin.residencebridge.persistence.MySqlResidenceRepository
 import me.yin.residencebridge.provider.register.ResidenceProviderRegister
 import me.yin.residencebridge.service.ResidenceTeleport
 import org.bukkit.Bukkit
@@ -35,7 +35,7 @@ object Teleport {
         }
 
         ResidenceBridge.scope.launch {
-            val residenceInfo = ResidenceMySQL.selectResidence(residenceName)
+            val residenceInfo = MySqlResidenceRepository.selectResidence(residenceName)
             if (residenceInfo == null) {
                 player.sendMessage("${ResidenceBridge.pluginPrefix} 领地不存在")
                 return@launch
@@ -67,7 +67,7 @@ object Teleport {
         }
 
         ResidenceBridge.scope.launch {
-            val residenceInfo = ResidenceMySQL.selectResidence(residenceName)
+            val residenceInfo = MySqlResidenceRepository.selectResidence(residenceName)
             if (residenceInfo == null) {
                 sender.sendMessage("${ResidenceBridge.pluginPrefix} 领地不存在")
                 return@launch

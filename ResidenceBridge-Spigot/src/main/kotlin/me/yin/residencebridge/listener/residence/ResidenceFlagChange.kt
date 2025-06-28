@@ -5,7 +5,7 @@ import com.bekvon.bukkit.residence.event.ResidenceFlagEvent.FlagType
 import com.bekvon.bukkit.residence.protection.FlagPermissions.FlagState
 import kotlinx.coroutines.launch
 import me.yin.residencebridge.ResidenceBridge
-import me.yin.residencebridge.persistence.ResidenceMySQL
+import me.yin.residencebridge.persistence.MySqlResidenceRepository
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 
@@ -25,18 +25,18 @@ object ResidenceFlagChange : Listener {
             when (event.flagType) {
                 FlagType.RESIDENCE -> {
                     when (event.newState) {
-                        FlagState.TRUE -> ResidenceMySQL.updateSetResidenceFlags(residenceName, event.flag, true)
-                        FlagState.FALSE -> ResidenceMySQL.updateSetResidenceFlags(residenceName, event.flag, false)
-                        else -> ResidenceMySQL.updateRemoveResidenceFlags(residenceName, event.flag)
+                        FlagState.TRUE -> MySqlResidenceRepository.updateSetResidenceFlags(residenceName, event.flag, true)
+                        FlagState.FALSE -> MySqlResidenceRepository.updateSetResidenceFlags(residenceName, event.flag, false)
+                        else -> MySqlResidenceRepository.updateRemoveResidenceFlags(residenceName, event.flag)
                     }
                 }
 
                 FlagType.PLAYER -> {
                     val playerUUID = event.player.uniqueId
                     when (event.newState) {
-                        FlagState.TRUE -> ResidenceMySQL.updateSetPlayerFlags(residenceName, playerUUID, event.flag, true)
-                        FlagState.FALSE -> ResidenceMySQL.updateSetPlayerFlags(residenceName, playerUUID, event.flag, false)
-                        else -> ResidenceMySQL.updateRemovePlayerFlags(residenceName, playerUUID, event.flag)
+                        FlagState.TRUE -> MySqlResidenceRepository.updateSetPlayerFlags(residenceName, playerUUID, event.flag, true)
+                        FlagState.FALSE -> MySqlResidenceRepository.updateSetPlayerFlags(residenceName, playerUUID, event.flag, false)
+                        else -> MySqlResidenceRepository.updateRemovePlayerFlags(residenceName, playerUUID, event.flag)
                     }
                 }
 

@@ -2,7 +2,7 @@ package me.yin.residencebridge.placeholder
 
 import me.clip.placeholderapi.expansion.PlaceholderExpansion
 import me.yin.residencebridge.ResidenceBridge
-import me.yin.residencebridge.persistence.ResidenceMySQL
+import me.yin.residencebridge.persistence.MySqlResidenceRepository
 import me.yin.residencebridge.provider.register.ResidenceProviderRegister
 import org.bukkit.OfflinePlayer
 import org.bukkit.plugin.Plugin
@@ -29,7 +29,7 @@ class ResidenceBridgeExpansion(plugin: Plugin) : PlaceholderExpansion() {
         val playerName = offlinePlayer.name ?: return null
         when {
             parameters.startsWith("names", ignoreCase = true) -> {
-                val names = ResidenceMySQL.selectOwnerResidenceNames(playerName)
+                val names = MySqlResidenceRepository.selectOwnerResidenceNames(playerName)
                 if (names.isEmpty()) {
                     return null
                 }
@@ -37,7 +37,7 @@ class ResidenceBridgeExpansion(plugin: Plugin) : PlaceholderExpansion() {
             }
 
             parameters.startsWith("infos", ignoreCase = true) -> {
-                val residenceInfos = ResidenceMySQL.selectOwnerResidences(playerName)
+                val residenceInfos = MySqlResidenceRepository.selectOwnerResidences(playerName)
                 val list = mutableListOf<String>()
                 for (residenceInfo in residenceInfos) {
                     list.add(residenceInfo.residenceName + ":" + residenceInfo.serverName)
@@ -49,7 +49,7 @@ class ResidenceBridgeExpansion(plugin: Plugin) : PlaceholderExpansion() {
             }
 
             parameters.startsWith("amount", ignoreCase = true) -> {
-                val amount = ResidenceMySQL.selectOwnerResidencesCount(playerName)
+                val amount = MySqlResidenceRepository.selectOwnerResidencesCount(playerName)
                 return amount.toString()
             }
 
