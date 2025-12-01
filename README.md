@@ -14,22 +14,28 @@
 4. 使用命令导入领地，处理重名领地
 5. bungeecord/waterfall/velocity 放入对应插件，需要开启端口转发，velocity 也一样
 
+与 Residence 某些功能严重冲突:
+- 放下箱子自动创建领地，此功能会无视命名冲突强行放置领地，导致数据库出现重名领地。如果阻止就会带来大量检查开销 - Residence 的 config.yml 的 NewPlayer.Use: true
+
 
 命令：
-- [领地桥接] 主命令 /residencebridge 缩写 /rb
-- [领地桥接] 列表 /rb list \[player\] \[page\]
-- [领地桥接] 列表 /rb listall \[page\]
-- [领地桥接] 传送领地 /rb teleport \<residence\> \[player\]
-- [领地桥接] 导入数据 /rb import
-- [领地桥接] 重新加载 /rb reload
+- 主命令 /residencebridge 缩写 /rb
+- 列表 /rb list \[player\] \[page\]
+- 列表 /rb listall \[page\]
+- 传送领地 /rb teleport \<residence\> \[player\]
+- 导入数据 /rb import
+- 重新加载 /rb reload
 
 PlaceholderAPI 变量：
+- 玩家领地
 - %residencebridge_player_residence_names%
 - %residencebridge_player_residence_names_\<index\>%
 - %residencebridge_player_residence_count%
 - %residencebridge_player_residence_maximum%
+- 所有领地
 - %residencebridge_server_residence_names%
 - %residencebridge_server_residence_names_\<index\>%
 - %residencebridge_server_residence_count%
+- 公开可传送
 - %residencebridge_residence_public_teleport_names%
 - %residencebridge_residence_public_teleport_names_\<index\>%
