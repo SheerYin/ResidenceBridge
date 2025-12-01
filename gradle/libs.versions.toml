@@ -1,0 +1,88 @@
+[versions]
+kotlin = "2.3.0-RC"
+
+
+paperweight = "2.0.0-beta.19"
+shadow = "9.2.2"
+resource-factory = "1.3.0"
+
+snakeyaml = "2.5"
+
+caffeine = "3.2.1"
+hikaricp = "7.0.2"
+
+placeholderapi = "2.11.6"
+
+
+serialization = "2.2.0"
+serialization-json = "1.9.0"
+coroutines = "1.10.2"
+
+kyori-adventure = "4.4.1"
+kyori-adventure-platform-bukkit = "4.4.1"
+configurate = "4.2.0"
+
+litecommands = "3.10.6"
+
+jimmer = "0.9.116"
+ksp = "2.3.0"
+
+#
+ben-manes-versions = "0.51.0"
+version-catalog-update = "0.8.5"
+
+
+
+
+[libraries]
+kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlin" }
+kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "serialization-json" }
+kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
+
+snakeyaml = { module = "org.yaml:snakeyaml", version.ref = "snakeyaml" }
+
+caffeine = { module = "com.github.ben-manes.caffeine:caffeine", version.ref = "caffeine"}
+hikaricp = { module = "com.zaxxer:HikariCP", version.ref = "hikaricp"}
+
+placeholderapi = { module = "me.clip:placeholderapi", version.ref = "placeholderapi"}
+
+
+kyori-adventure-api = { module = "net.kyori:adventure-api", version.ref = "kyori-adventure" }
+kyori-adventure-text-minimessage = { module = "net.kyori:adventure-text-minimessage", version.ref = "kyori-adventure" }
+
+kyori-adventure-platform-bukkit = { module = "net.kyori:adventure-platform-bukkit", version.ref = "kyori-adventure-platform-bukkit" }
+
+configurate-hocon = { module = "org.spongepowered:configurate-hocon", version.ref = "configurate" }
+configurate-yaml = { module = "org.spongepowered:configurate-yaml", version.ref = "configurate" }
+configurate-extra-kotlin = { module = "org.spongepowered:configurate-extra-kotlin", version.ref = "configurate" }
+
+
+litecommands-bukkit = { module = "dev.rollczi:litecommands-bukkit", version.ref = "litecommands"}
+
+
+jimmer-sql = { module = "org.babyfish.jimmer:jimmer-sql-kotlin", version.ref = "jimmer" }
+jimmer-ksp = { module = "org.babyfish.jimmer:jimmer-ksp", version.ref = "jimmer" }
+
+
+[plugins]
+foojay-resolver = { id = "org.gradle.toolchains.foojay-resolver-convention", version = "0.9.0" }
+
+kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "serialization" }
+
+paperweight-userdev = { id = "io.papermc.paperweight.userdev", version.ref = "paperweight" }
+shadow = { id = "com.gradleup.shadow", version.ref = "shadow" }
+resource-factory-paper-convention = { id = "xyz.jpenilla.resource-factory-paper-convention", version.ref = "resource-factory" }
+resource-factory-bukkit-convention = { id = "xyz.jpenilla.resource-factory-bukkit-convention", version.ref = "resource-factory" }
+
+
+
+ben-manes-versions = { id = "com.github.ben-manes.versions", version.ref = "ben-manes-versions" }
+version-catalog-update = { id = "nl.littlerobots.version-catalog-update", version.ref = "version-catalog-update" }
+
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+
+
+
+
+
