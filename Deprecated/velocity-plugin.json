@@ -1,9 +1,0 @@
-{
-  "id": "${lowercaseName}",
-  "name": "${rootName}",
-  "version": "${pluginVersion}",
-  "authors": [
-    "${pluginAuthor}"
-  ],
-  "main": "${group}.${rootName}"
-}
