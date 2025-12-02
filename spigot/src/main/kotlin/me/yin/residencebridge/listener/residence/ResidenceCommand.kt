@@ -48,7 +48,7 @@ class ResidenceCommand(
                             val claimedResidence = residenceInstance.residenceManager.getByName(residenceName)
                             if (claimedResidence == null) {
                                 event.isCancelled = true
-                                dynamicTabExecutor.executeTeleport(sender, null, residenceName)
+                                dynamicTabExecutor.executeTeleport(sender, residenceName)
                             }
                         }
 
@@ -73,7 +73,8 @@ class ResidenceCommand(
                                     val maximum = group.maxZones
 
                                     val count = allRepository.selectPlayerResidencesCount(connection, sender.uniqueId) ?: 0
-                                    if (maximum < count) {
+                                    // 当已有数量 >= 上限时，禁止继续创建
+                                    if (count >= maximum) {
                                         event.isCancelled = true
                                         val s = messageConfiguration.message.createSection.limit
                                         val tagResolver = TagResolver.resolver(

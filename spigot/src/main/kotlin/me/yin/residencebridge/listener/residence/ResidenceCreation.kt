@@ -13,7 +13,14 @@ import org.bukkit.event.Listener
 import java.util.*
 import kotlin.collections.set
 
-class ResidenceCreation(val residenceBridge: ResidenceBridge, val mainConfiguration: MainConfiguration, val databaseManager: DatabaseManager, val allRepository: AllRepository, val scope: CoroutineScope, val allCache: AllCache) : Listener {
+class ResidenceCreation(
+    val residenceBridge: ResidenceBridge,
+    val mainConfiguration: MainConfiguration,
+    val databaseManager: DatabaseManager,
+    val allRepository: AllRepository,
+    val scope: CoroutineScope,
+    val allCache: AllCache
+) : Listener {
 
     // 领地创建 前 触发
     @EventHandler

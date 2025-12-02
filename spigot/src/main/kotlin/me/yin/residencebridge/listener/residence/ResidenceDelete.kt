@@ -9,7 +9,12 @@ import me.yin.residencebridge.other.AllCache
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 
-class ResidenceDelete(val databaseManager: DatabaseManager, val allRepository: AllRepository, val scope: CoroutineScope, val allCache: AllCache) : Listener {
+class ResidenceDelete(
+    val databaseManager: DatabaseManager,
+    val allRepository: AllRepository,
+    val scope: CoroutineScope,
+    val allCache: AllCache
+) : Listener {
 
     // 领地被删除 前 时才会触发
     @EventHandler

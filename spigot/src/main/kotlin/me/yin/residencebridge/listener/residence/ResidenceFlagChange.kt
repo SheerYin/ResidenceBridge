@@ -14,7 +14,15 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import java.util.*
 
-class ResidenceFlagChange(val residenceBridge: ResidenceBridge, val residenceInstance: Residence, val mainConfiguration: MainConfiguration, val databaseManager: DatabaseManager, val allRepository: AllRepository, val scope: CoroutineScope, val allCache: AllCache) : Listener {
+class ResidenceFlagChange(
+    val residenceBridge: ResidenceBridge,
+    val residenceInstance: Residence,
+    val mainConfiguration: MainConfiguration,
+    val databaseManager: DatabaseManager,
+    val allRepository: AllRepository,
+    val scope: CoroutineScope,
+    val allCache: AllCache
+) : Listener {
 
     var mark = hashSetOf<String>()
 

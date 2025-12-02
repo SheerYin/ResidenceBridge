@@ -2,6 +2,7 @@ package me.yin.residencebridge.other
 
 import kotlinx.coroutines.*
 import java.util.*
+import kotlin.collections.set
 
 class AllCache(val databaseManager: DatabaseManager, val allRepository: AllRepository, val scope: CoroutineScope, val bukkitDispatcher: BukkitDispatcher) {
 
@@ -16,8 +17,8 @@ class AllCache(val databaseManager: DatabaseManager, val allRepository: AllRepos
 
     // 加速层
     private val playersByName = hashMapOf<String, Player>()
-    private val residencesSort = TreeSet<Residence>(compareBy { it.name })
-    private val residencesSortByPlayerUuid = hashMapOf<UUID, TreeSet<Residence>>()
+    private val residencesSort = ArrayList<Residence>()
+    private val residencesSortByPlayerUuid = hashMapOf<UUID, ArrayList<Residence>>()
 
     init {
         tryRefresh()
@@ -38,24 +39,20 @@ class AllCache(val databaseManager: DatabaseManager, val allRepository: AllRepos
         return residencesByName
     }
 
-    fun fetchSortedResidences(): Set<IReadOnlyResidence> {
+    fun fetchSortedResidences(): List<IReadOnlyResidence> {
         tryRefresh()
         return residencesSort
     }
 
-    fun fetchSortedResidencesByPlayerUuid(): Map<UUID, Set<IReadOnlyResidence>> {
+    fun fetchSortedResidencesByPlayerUuid(): Map<UUID, List<IReadOnlyResidence>> {
         tryRefresh()
         return residencesSortByPlayerUuid
     }
 
-    fun fetchSortedResidencesByPlayerName(name: String): Set<IReadOnlyResidence>? {
+    fun fetchSortedResidencesByPlayerName(name: String): List<IReadOnlyResidence>? {
         tryRefresh()
         val player = playersByName[name] ?: return null
         return residencesSortByPlayerUuid[player.uuid]
-    }
-
-    private fun createSortedResidenceSet(): TreeSet<Residence> {
-        return TreeSet(compareBy { it.name })
     }
 
     fun tryRefresh(force: Boolean = false) {
@@ -102,7 +99,7 @@ class AllCache(val databaseManager: DatabaseManager, val allRepository: AllRepos
                     val r = Residence(residenceName, ownerUuid, residenceFlags, playerFlags, residence.serverName)
                     residencesByName[residenceName] = r
                     residencesSort.add(r)
-                    residencesSortByPlayerUuid.getOrPut(ownerUuid) { createSortedResidenceSet() }.add(r)
+                    residencesSortByPlayerUuid.getOrPut(ownerUuid) { arrayListOf() }.add(r)
                 }
 
                 lastRefreshTime = System.nanoTime()
@@ -111,19 +108,69 @@ class AllCache(val databaseManager: DatabaseManager, val allRepository: AllRepos
     }
 
 
-
-    fun onResidenceCreation(player: Player, residence: Residence) {
-        val residenceName = residence.name
-
+    fun addPlayer1(player: Player) {
         val playerUuid = player.uuid
         val playerName = player.name
         playersByUuid[playerUuid] = player
         playersByName[playerName] = player
+    }
 
-        residencesByName[residenceName] = residence
-        residencesSort.add(residence)
+    fun addSortedList(list: ArrayList<Residence>, residence: Residence) {
+        val index = list.binarySearch { it.name.compareTo(residence.name) }
+        if (index < 0) {
+            val insertionPoint = -(index + 1)
+            list.add(insertionPoint, residence)
+        }
+    }
 
-        residencesSortByPlayerUuid.getOrPut(playerUuid) { createSortedResidenceSet() }.add(residence)
+    fun addResidence1(residence: Residence) {
+        residencesByName[residence.name] = residence
+
+        addSortedList(residencesSort, residence)
+
+        val residences = residencesSortByPlayerUuid.getOrPut(residence.ownerUuid) { arrayListOf() }
+        addSortedList(residences, residence)
+    }
+
+    fun removePlayer1(uuid: UUID): Player? {
+        val player = playersByUuid.remove(uuid) ?: return null
+        playersByName.remove(player.name)
+        return player
+    }
+
+    fun removePlayer1(name: String): Player? {
+        val player = playersByName.remove(name) ?: return null
+        playersByUuid.remove(player.uuid)
+        return player
+    }
+
+    fun removeSortedList(list: ArrayList<Residence>, residence: Residence) {
+        val index = list.binarySearch { it.name.compareTo(residence.name) }
+        if (index >= 0) {
+            list.removeAt(index)
+        }
+    }
+
+    fun removeResidence1(name: String): Residence? {
+        val residence = residencesByName.remove(name) ?: return null
+        removeSortedList(residencesSort, residence)
+
+        val residences = residencesSortByPlayerUuid[residence.ownerUuid]
+        if (residences != null) {
+            removeSortedList(residences, residence)
+        }
+
+        return residence
+    }
+
+
+
+
+
+
+    fun onResidenceCreation(player: Player, residence: Residence) {
+        addPlayer1(player)
+        addResidence1(residence)
     }
 
     fun onResidenceFlagChange(residence: Residence) {
@@ -135,33 +182,28 @@ class AllCache(val databaseManager: DatabaseManager, val allRepository: AllRepos
     }
 
     fun onResidenceDelete(name: String) {
-        val residence = residencesByName.remove(name) ?: return
-
-        residencesSort.remove(residence)
-        residencesSortByPlayerUuid[residence.ownerUuid]?.remove(residence)
+        removeResidence1(name)
     }
 
     fun onResidenceRename(oldName: String, newName: String) {
-        val residence = residencesByName.remove(oldName) ?: return
-        residencesSort.remove(residence)
-        residencesSortByPlayerUuid[residence.ownerUuid]?.remove(residence)
-
+        val residence = removeResidence1(oldName) ?: return
         residence.name = newName
-
-        residencesByName[newName] = residence
-        residencesSort.add(residence)
-        residencesSortByPlayerUuid[residence.ownerUuid]?.add(residence)
+        addResidence1(residence)
     }
 
     fun onResidenceOwnerChange(name: String, newPlayerUuid: UUID) {
         val residence = residencesByName[name] ?: return // 如果 Residence 不存在，直接返回
         val oldPlayerUuid = residence.ownerUuid // 获取旧玩家的 UUID
-        residencesSortByPlayerUuid[oldPlayerUuid]?.remove(residence)
+        val oldResidence = residencesSortByPlayerUuid[oldPlayerUuid]
+        if (oldResidence != null) {
+            removeSortedList(oldResidence, residence)
+        }
 
         residence.ownerUuid = newPlayerUuid
-
         residencesByName[name] = residence
-        residencesSortByPlayerUuid.getOrPut(newPlayerUuid) { createSortedResidenceSet() }.add(residence)
+
+        val newResidences = residencesSortByPlayerUuid.getOrPut(newPlayerUuid) { arrayListOf() }
+        addSortedList(newResidences, residence)
     }
 
 

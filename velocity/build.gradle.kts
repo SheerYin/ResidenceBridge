@@ -34,6 +34,7 @@ val minecraftPluginLowercaseName = minecraftPluginName.lowercase()
 val minecraftPluginMain = "$group.$minecraftPluginName.$minecraftPluginName"
 val minecraftPluginVersion = SimpleDateFormat("yyyy.MM.dd").format(Date()) + "-SNAPSHOT"
 val minecraftPluginAuthors = listOf("尹")
+val minecraftPluginJarName = minecraftPluginName + "-" + project.name
 
 val generateVelocityPluginJson by tasks.register("generateVelocityPluginJson") {
     group = "build"
@@ -73,13 +74,13 @@ tasks.processResources {
 }
 
 tasks.jar {
-    archiveFileName.set("$minecraftPluginName-${project.name}.jar")
+    archiveFileName.set("$minecraftPluginJarName.jar")
 }
 
 tasks.shadowJar {
     mergeServiceFiles()
 
-    archiveFileName.set("$minecraftPluginName-${project.name}-shadow.jar")
+    archiveFileName.set("$minecraftPluginJarName-shadow.jar")
 
     relocate("kotlin.", "${project.group}.relocate.kotlin")
     relocate("kotlinx.serialization", "${project.group}.relocate.kotlinx.serialization")

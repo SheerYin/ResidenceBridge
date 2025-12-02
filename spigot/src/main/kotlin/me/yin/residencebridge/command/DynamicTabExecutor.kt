@@ -11,6 +11,7 @@ import me.yin.residencebridge.other.*
 import net.kyori.adventure.audience.Audience
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
+import net.kyori.adventure.text.minimessage.translation.Argument.tagResolver
 import org.bukkit.Bukkit
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
@@ -84,7 +85,7 @@ class DynamicTabExecutor(
                 }
                 "teleport" -> {
                     if (!permissionMessage(sender, "$mainPermission.teleport")) return false
-                    executeTeleport(sender,null, arguments[1])
+                    executeTeleport(sender,arguments[1])
                 }
             }
         }
@@ -95,16 +96,12 @@ class DynamicTabExecutor(
                     val targetName = arguments[1]
                     val page = arguments[2].toIntOrNull() ?: return false
 
-                    if (sender.name == targetName) {
-                        executeList(sender, page)
-                    } else {
-                        executeList(sender, targetName, page)
-                    }
+                    executeList(sender, targetName, page)
                 }
 
                 "teleport" -> {
                     if (!permissionMessage(sender, "$mainPermission.teleport")) return false
-                    executeTeleport(sender, arguments[2],arguments[1])
+                    executeTeleport(sender, arguments[1],arguments[2])
                 }
             }
         }
@@ -267,74 +264,75 @@ class DynamicTabExecutor(
 
 
 
-    fun executeList(sender: CommandSender, page: Int = 1, pageSize: Int = 10) {
+    fun executeList(sender: CommandSender, targetName: String? = null, page: Int = 1, pageSize: Int = 10) {
         val audience = simpleMessage.bukkitAudiences.sender(sender)
         val listSection = messageConfiguration.message.listSection
 
-        // 检查是否为玩家
-        if (sender !is Player) {
-            val s = messageConfiguration.message.onlyPlayer
-            simpleMessage.sendMessage(audience, s)
-            return
+        val residences: List<IReadOnlyResidence>
+        if (targetName == null) {
+            if (sender !is Player) {
+                val s = messageConfiguration.message.onlyPlayer
+                simpleMessage.sendMessage(audience, s)
+                return
+            }
+            val ress = allCache.fetchSortedResidencesByPlayerUuid()[sender.uniqueId]
+            if (ress == null || ress.isEmpty()) {
+                val s = listSection.zeroOwner
+                simpleMessage.sendMessage(audience, s)
+                return
+            }
+            residences = ress
+        } else {
+            val targetPlayer = allCache.fetchPlayersByName()[targetName]
+            if (targetPlayer == null) {
+                val s = messageConfiguration.message.noPlayer
+                simpleMessage.sendMessage(audience, s, Placeholder.unparsed("target", targetName))
+                return
+            }
+            val ress = allCache.fetchSortedResidencesByPlayerUuid()[targetPlayer.uuid]
+            if (ress == null || ress.isEmpty()) {
+                val s = listSection.zero
+                simpleMessage.sendMessage(audience, s, Placeholder.unparsed("target", targetName))
+                return
+            }
+            residences = ress
         }
 
-        // 获取数据 (String 集合)
-        val residences = allCache.fetchSortedResidencesByPlayerUuid()[sender.uniqueId]
-        if (residences == null || residences.isEmpty()) {
-            val s = listSection.zeroOwner
-            simpleMessage.sendMessage(audience, s)
-            return
-        }
-
-        // 调用通用分页
-        sendPaginatedView(
-            audience = audience,
-            residences = residences,
-            page = page,
-            pageSize = pageSize,
-            headerTemplate = listSection.headerOwner,
-            entryTemplate = listSection.entryPlayer, // 自己看不需要显示名字
-            commandFormat = "$pluginNameLowercase list ${sender.name} %page%",     // 生成 /rb list 2
-            headerExtraResolver = TagResolver.empty()
-        )
-    }
-
-    /**
-     * 2. 查看他人的领地
-     */
-    fun executeList(sender: CommandSender, targetName: String, page: Int = 1, pageSize: Int = 10) {
-        val audience = simpleMessage.bukkitAudiences.sender(sender)
-        val listSection = messageConfiguration.message.listSection
-
-        // 查找目标玩家
-        val targetPlayer = allCache.fetchPlayersByName()[targetName]
-        if (targetPlayer == null) {
-            val s = messageConfiguration.message.noPlayer
-            simpleMessage.sendMessage(audience, s, Placeholder.unparsed("target", targetName))
-            return
-        }
-
-        // 获取数据
-        val residences = allCache.fetchSortedResidencesByPlayerUuid()[targetPlayer.uuid]
-        if (residences == null || residences.isEmpty()) {
-            val s = listSection.zero
-            simpleMessage.sendMessage(audience, s, Placeholder.unparsed("target", targetName))
-            return
-        }
-
-        // 调用通用分页
-        sendPaginatedView(
-            audience = audience,
-            residences = residences,
-            page = page,
-            pageSize = pageSize,
-            headerTemplate = listSection.headerOther,
-            entryTemplate = listSection.entryAll,     // 列表显示玩家名
-            commandFormat = "$pluginNameLowercase list $targetName %page%", // 生成 /rb list 2 Steve
-            headerExtraResolver = TagResolver.resolver(
-                Placeholder.unparsed("target", targetName)  // Header 需要 <target>
+        if (targetName == null) {
+            val s1 = listSection.headerOwner
+            val s2 = listSection.entryPlayer
+            sendPaginatedView(
+                audience,
+                residences,
+                page,
+                pageSize,
+                s1,
+                TagResolver.empty(),
+                s2,
+                "$pluginNameLowercase list sender.name %page%"
             )
-        )
+        } else {
+            val s1: String
+            val s2: String
+            if (sender.name == targetName) {
+                s1 = listSection.headerOwner
+                s2 = listSection.entryPlayer
+            } else {
+                s1 = listSection.headerOther
+                s2 = listSection.entryAll
+            }
+
+            sendPaginatedView(
+                audience,
+                residences,
+                page,
+                pageSize,
+                s1,
+                Placeholder.unparsed("target", targetName),
+                s2,
+                "$pluginNameLowercase list $targetName %page%"
+            )
+        }
     }
 
     /**
@@ -345,17 +343,21 @@ class DynamicTabExecutor(
         val listSection = messageConfiguration.message.listSection
 
         val residences = allCache.fetchSortedResidences()
+        if (residences.isEmpty()) {
+            //
+            return
+        }
 
         // 调用通用分页
         sendPaginatedView(
-            audience = audience,
-            residences = residences,
-            page = page,
-            pageSize = pageSize,
-            headerTemplate = listSection.headerAll,
-            entryTemplate = listSection.entryAll, // 列表显示玩家名
-            commandFormat = "$pluginNameLowercase listall %page%",
-            headerExtraResolver = TagResolver.empty()
+            audience,
+            residences,
+            page,
+            pageSize,
+            listSection.headerAll,
+            TagResolver.empty(),
+            listSection.entryAll,
+            "$pluginNameLowercase listall %page%"
         )
     }
 
@@ -366,21 +368,20 @@ class DynamicTabExecutor(
      */
     private fun sendPaginatedView(
         audience: Audience,
-        residences: Set<IReadOnlyResidence>,
+        residences: List<IReadOnlyResidence>,
         page: Int,
         pageSize: Int,
         headerTemplate: String,
         headerExtraResolver: TagResolver,
         entryTemplate: String,
-        commandFormat: String
+        commandString: String
     ) {
-        val listConfig = messageConfiguration.message.listSection
         val count = residences.size
         val totalPages = ((count + pageSize - 1) / pageSize).coerceAtLeast(1)
 
         // 1. 页码错误拦截
         if (page < 1 || page > totalPages) {
-            val s = listConfig.pageError
+            val s = messageConfiguration.message.listSection.pageError
             val tagResolver = TagResolver.resolver(
                 Placeholder.unparsed("page", page.toString()),
                 Placeholder.unparsed("total_pages", totalPages.toString())
@@ -389,6 +390,7 @@ class DynamicTabExecutor(
             return
         }
 
+
         // 2. 发送 Header
         val headerResolver = TagResolver.resolver(
             headerExtraResolver, // 包含 target 等外部变量
@@ -396,14 +398,9 @@ class DynamicTabExecutor(
         )
         simpleMessage.sendMessage(audience, headerTemplate, headerResolver)
 
-        // 3. 截取数据 (使用 Sequence 优化性能)
-        val pageItems = residences.asSequence()
-            .drop((page - 1) * pageSize)
-            .take(pageSize)
-        // 注意：这里不需要 .toList()，直接 forEach 遍历 Sequence 即可
-
-        // 4. 遍历渲染条目
-        pageItems.forEach {
+        val start = (page - 1) * pageSize
+        val end = (start + pageSize).coerceAtMost(count)
+        residences.subList(start, end).forEach {
             val ownerName = allCache.fetchPlayersByUuid()[it.ownerUuid]?.name ?: "Unknown"
 
             val residenceName = it.name
@@ -418,29 +415,37 @@ class DynamicTabExecutor(
             simpleMessage.sendMessage(audience, entryTemplate, entryResolver)
         }
 
-        // 5. 发送按钮
         val previousPage = (page - 1).coerceAtLeast(1)
         val nextPage = (page + 1).coerceAtMost(totalPages)
 
-        // 替换命令中的 %page%
-        val prevCommand = commandFormat.replace("%page%", previousPage.toString())
-        val nextCommand = commandFormat.replace("%page%", nextPage.toString())
+        val previousCommand = commandString.replace("%page%", previousPage.toString())
+        val nextCommand = commandString.replace("%page%", nextPage.toString())
 
         val footerResolver = TagResolver.resolver(
-            Placeholder.parsed("previous_command", prevCommand),
+            Placeholder.parsed("previous_command", previousCommand),
             Placeholder.unparsed("page", page.toString()),
             Placeholder.unparsed("total_pages", totalPages.toString()),
             Placeholder.parsed("next_command", nextCommand)
         )
 
-        val s = listConfig.footer
+        val s = messageConfiguration.message.listSection.footer
         simpleMessage.sendMessage(audience, s, footerResolver)
     }
 
-    fun executeTeleport(sender: CommandSender, targetName: String?, residenceName: String) {
+
+    fun executeTeleport(sender: CommandSender, residenceName: String, targetName: String? = null) {
         val audience = simpleMessage.bukkitAudiences.sender(sender)
 
-        val targetPlayer= if (targetName != null) {
+        val targetPlayer: Player
+        if (targetName == null) {
+            // B. 未指定目标 -> 目标是自己 (Sender)
+            if (sender !is Player) {
+                val s = messageConfiguration.message.onlyPlayer
+                simpleMessage.sendMessage(audience, s)
+                return
+            }
+            targetPlayer = sender
+        } else {
             // A. 指定了目标 -> 查找在线玩家
             val player = residenceBridge.server.getPlayerExact(targetName)
             if (player == null) {
@@ -448,15 +453,7 @@ class DynamicTabExecutor(
                 simpleMessage.sendMessage(audience, s, Placeholder.unparsed("target", targetName))
                 return
             }
-            player
-        } else {
-            // B. 未指定目标 -> 目标是自己 (Sender)
-            if (sender !is Player) {
-                val s = messageConfiguration.message.onlyPlayer
-                simpleMessage.sendMessage(audience, s)
-                return
-            }
-            sender
+            targetPlayer = player
         }
 
         scope.launch {
