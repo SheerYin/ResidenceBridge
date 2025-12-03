@@ -6,7 +6,7 @@ import net.kyori.adventure.text.minimessage.MiniMessage
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
 import org.bukkit.command.CommandSender
 
-class SimpleMessage(val bukkitAudiences: BukkitAudiences, val miniMessage: MiniMessage) {
+class SimpleMessage(val bukkitAudiences: BukkitAudiences, val miniMessage: MiniMessage = MiniMessage.miniMessage()) {
 
     fun sendMessage(sender: CommandSender, message: String, tagResolver: TagResolver? = null) {
         if (message.isEmpty()) return

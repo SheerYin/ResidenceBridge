@@ -11,8 +11,6 @@ import me.yin.residencebridge.other.*
 import net.kyori.adventure.audience.Audience
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
-import net.kyori.adventure.text.minimessage.translation.Argument.tagResolver
-import org.bukkit.Bukkit
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.command.TabExecutor
@@ -137,12 +135,16 @@ class DynamicTabExecutor(
                     val argument = arguments[2]
                     val empty = argument.isEmpty()
                     val list = mutableListOf<String>()
-                    for (player in Bukkit.getOnlinePlayers()) {
-                        val playerName = player.name
-                        if (empty) {
-                            list.add(playerName)
-                        } else if (playerName.startsWith(argument, true)) {
-                            list.add(playerName)
+                    if (empty) {
+                        residenceBridge.server.onlinePlayers.forEach {
+                            list.add(it.name)
+                        }
+                    } else {
+                        residenceBridge.server.onlinePlayers.forEach {
+                            val playerName = it.name
+                            if (playerName.startsWith(argument, true)) {
+                                list.add(playerName)
+                            }
                         }
                     }
                     return list
@@ -252,6 +254,7 @@ class DynamicTabExecutor(
 
     fun executeReloadMessages(sender: CommandSender) {
         try {
+            mainConfiguration.reload()
             messageConfiguration.reload()
             val s = messageConfiguration.message.reloadSection.success
             simpleMessage.sendMessage(sender, s)
@@ -291,7 +294,7 @@ class DynamicTabExecutor(
             }
             val ress = allCache.fetchSortedResidencesByPlayerUuid()[targetPlayer.uuid]
             if (ress == null || ress.isEmpty()) {
-                val s = listSection.zero
+                val s = listSection.zeroOther
                 simpleMessage.sendMessage(audience, s, Placeholder.unparsed("target", targetName))
                 return
             }
@@ -344,7 +347,8 @@ class DynamicTabExecutor(
 
         val residences = allCache.fetchSortedResidences()
         if (residences.isEmpty()) {
-            //
+            val s = listSection.zero
+            simpleMessage.sendMessage(audience, s)
             return
         }
 

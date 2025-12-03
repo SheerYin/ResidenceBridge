@@ -1,11 +1,24 @@
 package me.yin.residencebridge.other
 
+import com.zaxxer.hikari.HikariConfig
+import com.zaxxer.hikari.HikariDataSource
+import me.yin.residencebridge.configuration.MainConfiguration
 import java.sql.Connection
-import javax.sql.DataSource
 
-class DatabaseManager(
-    val dataSource: DataSource
-) {
+class DatabaseManager(val mainConfiguration: MainConfiguration) {
+
+    val dataSource = run {
+        val simpleConfiguration = mainConfiguration.simpleConfiguration
+        val hikariConfig = HikariConfig().apply {
+            jdbcUrl = simpleConfiguration.url
+            maximumPoolSize = simpleConfiguration.maximumPoolSize
+            minimumIdle = simpleConfiguration.minimumIdle
+            connectionTimeout = simpleConfiguration.connectionTimeout
+            idleTimeout = simpleConfiguration.idleTimeout
+            maxLifetime = simpleConfiguration.maximumLifetime
+        }
+        HikariDataSource(hikariConfig)
+    }
 
     fun <T> executeTransaction(block: (Connection) -> T): T {
         // use 块会自动关闭连接 (close)

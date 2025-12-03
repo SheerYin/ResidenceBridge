@@ -1,8 +1,6 @@
 package me.yin.residencebridge
 
 import com.bekvon.bukkit.residence.Residence
-import com.zaxxer.hikari.HikariConfig
-import com.zaxxer.hikari.HikariDataSource
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
@@ -14,17 +12,11 @@ import me.yin.residencebridge.configuration.MainConfiguration
 import me.yin.residencebridge.configuration.MessageConfiguration
 import me.yin.residencebridge.listener.AsyncPlayerJoin
 import me.yin.residencebridge.listener.ReceivePluginMessage
-import me.yin.residencebridge.listener.residence.ResidenceCommand
-import me.yin.residencebridge.listener.residence.ResidenceCreation
-import me.yin.residencebridge.listener.residence.ResidenceDelete
-import me.yin.residencebridge.listener.residence.ResidenceFlagChange
-import me.yin.residencebridge.listener.residence.ResidenceOwnerChange
-import me.yin.residencebridge.listener.residence.ResidenceRename
+import me.yin.residencebridge.listener.residence.*
 import me.yin.residencebridge.message.SimpleMessage
 import me.yin.residencebridge.other.*
 import me.yin.residencebridge.placeholder.ResidenceBridgeExpansion
 import net.kyori.adventure.platform.bukkit.BukkitAudiences
-import net.kyori.adventure.text.minimessage.MiniMessage
 import org.bukkit.plugin.java.JavaPlugin
 
 class ResidenceBridge : JavaPlugin() {
@@ -55,20 +47,9 @@ class ResidenceBridge : JavaPlugin() {
 
         mainConfiguration = MainConfiguration(this)
         messageConfiguration = MessageConfiguration(this)
-        val simpleMessage = SimpleMessage(BukkitAudiences.create(this), MiniMessage.miniMessage())
+        val simpleMessage = SimpleMessage(BukkitAudiences.create(this))
 
-        val simpleConfiguration = mainConfiguration.simpleConfiguration
-        val hikariConfig = HikariConfig().apply {
-            jdbcUrl = simpleConfiguration.url
-            maximumPoolSize = simpleConfiguration.maximumPoolSize
-            minimumIdle = simpleConfiguration.minimumIdle
-            connectionTimeout = simpleConfiguration.connectionTimeout
-            idleTimeout = simpleConfiguration.idleTimeout
-            maxLifetime = simpleConfiguration.maximumLifetime
-        }
-        val dataSource = HikariDataSource(hikariConfig)
-
-        databaseManager = DatabaseManager(dataSource)
+        databaseManager = DatabaseManager(mainConfiguration)
 
         val json = Json {
             serializersModule = SerializersModule {

@@ -79,7 +79,8 @@ class MessageConfiguration(val residenceBridge: ResidenceBridge) {
         @ConfigSerializable
         class ListSection(
             val zeroOwner: String = "<white>[领地桥接] 你没有领地",
-            val zero: String = "<white>[领地桥接] 玩家 <target> 没有领地",
+            val zeroOther: String = "<white>[领地桥接] 玩家 <target> 没有领地",
+            val zero: String = "<white>[领地桥接] 没有领地",
             val pageError: String = "<white>[领地桥接] 页码 <page> 错误！请输入 1 到 <total_pages> 页码",
             val headerOwner: String = "<white>[领地桥接] <gold>我的领地 <gray>（共 <count> 个）",
             val headerOther: String = "<white>[领地桥接] <gold>玩家 <target> 的领地 <gray>（共 <count> 个）",
