@@ -1,9 +1,7 @@
 package me.yin.residencebridge
 
 import com.bekvon.bukkit.residence.Residence
-import kotlinx.coroutines.CoroutineName
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.*
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.contextual
@@ -29,14 +27,16 @@ class ResidenceBridge : JavaPlugin() {
     val pluginChannel = "${pluginNameLowercase}:channel"
 
     val mainJob = SupervisorJob()
-    val scope = CoroutineScope(mainJob + CoroutineName(pluginName))
-
+    val mainScope = CoroutineScope(mainJob + Dispatchers.IO + CoroutineName(pluginName))
 
     lateinit var mainConfiguration: MainConfiguration
         private set
 
     lateinit var messageConfiguration: MessageConfiguration
-    private set
+        private set
+
+    lateinit var simpleMessage: SimpleMessage
+        private set
 
     lateinit var databaseManager: DatabaseManager
         private set
@@ -45,9 +45,29 @@ class ResidenceBridge : JavaPlugin() {
     override fun onEnable() {
         logger.info("插件开始加载 $pluginVersion")
 
+        val pluginManager = server.pluginManager
+        var residenceInstance: Residence?
+        val residencePlugin = pluginManager.getPlugin("Residence")
+        if (residencePlugin != null) {
+            logger.info("挂钩 Residence")
+            residenceInstance = residencePlugin as Residence
+
+            val chestCreateResidence = residenceInstance.configManager.isNewPlayerUse
+            if (chestCreateResidence) {
+                logger.warning("箱子自动创建领地功能和本插件冲突！")
+                logger.warning("请修改 Residence/config.yml NewPlayer.Use: true -> false 再重启")
+                pluginManager.disablePlugin(this)
+                return
+            }
+        } else {
+            logger.warning("找不到 Residence 相关逻辑取消")
+            residenceInstance = null
+        }
+
         mainConfiguration = MainConfiguration(this)
         messageConfiguration = MessageConfiguration(this)
-        val simpleMessage = SimpleMessage(BukkitAudiences.create(this))
+
+        simpleMessage = SimpleMessage(BukkitAudiences.create(this))
 
         databaseManager = DatabaseManager(mainConfiguration)
 
@@ -65,22 +85,7 @@ class ResidenceBridge : JavaPlugin() {
         }
 
         val bukkitDispatcher = BukkitDispatcher(this)
-        val allCache = AllCache(databaseManager, allRepository, scope, bukkitDispatcher)
-
-
-
-        val pluginManager = server.pluginManager
-        pluginManager.registerEvents(AsyncPlayerJoin(databaseManager, allRepository), this)
-
-        var residenceInstance: Residence?
-        val residencePlugin = pluginManager.getPlugin("Residence")
-        if (residencePlugin != null) {
-            logger.info("挂钩 Residence")
-            residenceInstance = residencePlugin as Residence
-        } else {
-            logger.warning("找不到 Residence 相关逻辑取消")
-            residenceInstance = null
-        }
+        val allCache = AllCache(databaseManager, allRepository, mainScope, bukkitDispatcher)
 
         val placeholderAPIPlugin = pluginManager.getPlugin("PlaceholderAPI")
         if (placeholderAPIPlugin != null) {
@@ -96,7 +101,7 @@ class ResidenceBridge : JavaPlugin() {
             residenceInstance,
             databaseManager,
             allRepository,
-            scope,
+            mainScope,
             allCache,
             residenceTeleport,
             simpleMessage,
@@ -105,13 +110,14 @@ class ResidenceBridge : JavaPlugin() {
         )
         getCommand(pluginNameLowercase)?.setExecutor(executor)
 
+        pluginManager.registerEvents(AsyncPlayerJoin(databaseManager, allRepository), this)
         if (residenceInstance != null) {
             pluginManager.registerEvents(ResidenceCommand(residenceInstance, databaseManager, allRepository, simpleMessage, messageConfiguration, executor), this)
-            pluginManager.registerEvents(ResidenceCreation(this, mainConfiguration, databaseManager, allRepository, scope, allCache), this)
-            pluginManager.registerEvents(ResidenceDelete(databaseManager, allRepository, scope, allCache), this)
-            pluginManager.registerEvents(ResidenceFlagChange(this, residenceInstance, mainConfiguration, databaseManager, allRepository, scope, allCache), this)
-            pluginManager.registerEvents(ResidenceOwnerChange(databaseManager, allRepository, scope, allCache), this)
-            pluginManager.registerEvents(ResidenceRename(databaseManager, allRepository, scope, allCache, simpleMessage, messageConfiguration), this)
+            pluginManager.registerEvents(ResidenceCreation(this, mainConfiguration, databaseManager, allRepository, mainScope, allCache), this)
+            pluginManager.registerEvents(ResidenceDelete(databaseManager, allRepository, mainScope, allCache), this)
+            pluginManager.registerEvents(ResidenceFlagChange(this, residenceInstance, mainConfiguration, databaseManager, allRepository, mainScope, allCache), this)
+            pluginManager.registerEvents(ResidenceOwnerChange(databaseManager, allRepository, mainScope, allCache), this)
+            pluginManager.registerEvents(ResidenceRename(databaseManager, allRepository, mainScope, allCache, simpleMessage, messageConfiguration), this)
         }
 
         server.messenger.registerOutgoingPluginChannel(this, pluginChannel)
@@ -120,6 +126,35 @@ class ResidenceBridge : JavaPlugin() {
 
     override fun onDisable() {
         logger.info("插件开始卸载 $pluginVersion")
+
+        runBlocking {
+            try {
+                withTimeout(5000L) {
+                    val jobs = mainJob.children.toList()
+                    if (jobs.isNotEmpty()) {
+                        logger.info("正在等待 ${jobs.size} 个后台任务完成，最多等待 5 秒")
+                        jobs.forEach { job ->
+                            logger.info("等待协程 ${job[CoroutineName]?.name ?: "未命名"}")
+                        }
+                        jobs.joinAll()
+                        logger.info("任务全部完成")
+                    }
+                }
+            } catch (e: TimeoutCancellationException) {
+                logger.warning("等待超时，强制取消所有任务")
+            } finally {
+                mainJob.cancel()
+            }
+        }
+
+        if (::simpleMessage.isInitialized) {
+            simpleMessage.bukkitAudiences.close()
+        }
+
+        if (::databaseManager.isInitialized) {
+            logger.info("正在关闭数据库连接…")
+            databaseManager.dataSource.close()
+        }
     }
 
 

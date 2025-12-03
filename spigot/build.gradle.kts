@@ -59,7 +59,7 @@ version = "1.0.0"
 
 val minecraftPluginName = property("pluginBaseName") as String
 val minecraftPluginLowercaseName = minecraftPluginName.lowercase()
-val minecraftPluginMain = "$group.$minecraftPluginName.$minecraftPluginName"
+val minecraftPluginMain = "$group.$minecraftPluginLowercaseName.$minecraftPluginName"
 val minecraftPluginVersion = SimpleDateFormat("yyyy.MM.dd").format(Date()) + "-SNAPSHOT"
 val minecraftPluginAuthors = listOf("尹")
 val minecraftPluginJarName = minecraftPluginName + "-" + project.name
@@ -171,25 +171,16 @@ tasks.shadowJar {
     archiveFileName.set("$minecraftPluginJarName-shadow.jar")
     transform(PluginYmlLibrariesRemover())
 
-    relocate("kotlin.", "${project.group}.relocate.kotlin")
-    relocate("kotlinx.serialization", "${project.group}.relocate.kotlinx.serialization")
-    relocate("kotlinx.coroutines", "${project.group}.relocate.kotlinx.coroutines")
+    relocate("kotlin.", "${project.group}.relocate.kotlin.")
+    relocate("kotlinx.serialization.", "${project.group}.relocate.kotlinx.serialization.")
+    relocate("kotlinx.coroutines.", "${project.group}.relocate.kotlinx.coroutines.")
+    relocate("org.jetbrains.", "${project.group}.relocate.org.jetbrains.")
+    relocate("org.intellij.", "${project.group}.relocate.org.intellij.")
 
-    relocate("org.jetbrains", "${project.group}.relocate.org.jetbrains")
-    relocate("org.intellij", "${project.group}.relocate.org.intellij")
-    // relocate("org.slf4j", "${project.group}.relocate.org.slf4j")
-    relocate("org.jspecify", "${project.group}.relocate.org.jspecify")
-    relocate("org.spongepowered", "${project.group}.relocate.org.spongepowered")
-
-    relocate("net.kyori", "${project.group}.relocate.net.kyori")
-
-    relocate("com.zaxxer.hikari", "${project.group}.relocate.com.zaxxer.hikaricp")
-    // relocate("com.google", "${project.group}.relocate.com.google")
-    relocate("com.github", "${project.group}.relocate.com.github")
-
-    relocate("io.leangen", "${project.group}.relocate.io.leangen")
-
-    relocate("dev.rollczi", "${project.group}.relocate.dev.rollczi")
+    relocate("org.spongepowered.", "${project.group}.relocate.org.spongepowered.")
+    relocate("net.kyori.", "${project.group}.relocate.net.kyori.")
+    relocate("com.zaxxer.hikari.", "${project.group}.relocate.com.zaxxer.hikaricp.")
+    relocate("io.leangen.", "${project.group}.relocate.io.leangen.")
 }
 
 

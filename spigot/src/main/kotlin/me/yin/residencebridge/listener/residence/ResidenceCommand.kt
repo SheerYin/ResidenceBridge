@@ -3,9 +3,9 @@ package me.yin.residencebridge.listener.residence
 import com.bekvon.bukkit.residence.Residence
 import com.bekvon.bukkit.residence.event.ResidenceCommandEvent
 import me.yin.residencebridge.command.DynamicTabExecutor
-import me.yin.residencebridge.other.AllRepository
 import me.yin.residencebridge.configuration.MessageConfiguration
 import me.yin.residencebridge.message.SimpleMessage
+import me.yin.residencebridge.other.AllRepository
 import me.yin.residencebridge.other.DatabaseManager
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
@@ -55,7 +55,7 @@ class ResidenceCommand(
                         arguments[0].lowercase() == "create" -> {
                             val audience = simpleMessage.bukkitAudiences.sender(sender)
                             if (sender !is Player) {
-                                val s= messageConfiguration.message.onlyPlayer
+                                val s = messageConfiguration.message.onlyPlayer
                                 simpleMessage.sendMessage(audience, s)
                                 return
                             }

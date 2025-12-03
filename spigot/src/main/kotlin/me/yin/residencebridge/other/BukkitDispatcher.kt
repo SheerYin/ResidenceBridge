@@ -8,6 +8,9 @@ class BukkitDispatcher(private val residenceBridge: ResidenceBridge) : Coroutine
     val server = residenceBridge.server
 
     override fun dispatch(context: CoroutineContext, block: Runnable) {
+        if (!residenceBridge.isEnabled) {
+            return
+        }
         if (server.isPrimaryThread) {
             block.run()
         } else {

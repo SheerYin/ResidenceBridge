@@ -86,11 +86,6 @@ class ResidenceFlagChange(
     }
 
 
-
-
-
-
-
 //    // 鬼屎频繁更新，现在换成定时更新
 //
 //    // Flags 被修改 前 时才会触发

@@ -3,9 +3,9 @@ package me.yin.residencebridge.listener.residence
 import com.bekvon.bukkit.residence.event.ResidenceDeleteEvent
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import me.yin.residencebridge.other.AllCache
 import me.yin.residencebridge.other.AllRepository
 import me.yin.residencebridge.other.DatabaseManager
-import me.yin.residencebridge.other.AllCache
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 

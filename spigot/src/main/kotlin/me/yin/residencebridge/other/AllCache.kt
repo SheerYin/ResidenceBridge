@@ -2,7 +2,6 @@ package me.yin.residencebridge.other
 
 import kotlinx.coroutines.*
 import java.util.*
-import kotlin.collections.set
 
 class AllCache(val databaseManager: DatabaseManager, val allRepository: AllRepository, val scope: CoroutineScope, val bukkitDispatcher: BukkitDispatcher) {
 
@@ -68,7 +67,7 @@ class AllCache(val databaseManager: DatabaseManager, val allRepository: AllRepos
         }
 
         refreshJob = scope.launch {
-            val playersDeferred = async { dataSource.connection.use { connection -> allRepository.selectPlayers(connection) }  }
+            val playersDeferred = async { dataSource.connection.use { connection -> allRepository.selectPlayers(connection) } }
             val residencesDeferred = async { dataSource.connection.use { connection -> allRepository.selectResidences(connection) } }
 
             val players = playersDeferred.await()
@@ -164,10 +163,6 @@ class AllCache(val databaseManager: DatabaseManager, val allRepository: AllRepos
     }
 
 
-
-
-
-
     fun onResidenceCreation(player: Player, residence: Residence) {
         addPlayer1(player)
         addResidence1(residence)
@@ -205,7 +200,6 @@ class AllCache(val databaseManager: DatabaseManager, val allRepository: AllRepos
         val newResidences = residencesSortByPlayerUuid.getOrPut(newPlayerUuid) { arrayListOf() }
         addSortedList(newResidences, residence)
     }
-
 
 
     class Player(

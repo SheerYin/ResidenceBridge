@@ -28,7 +28,7 @@ class DynamicTabExecutor(
     val simpleMessage: SimpleMessage,
     val mainConfiguration: MainConfiguration,
     val messageConfiguration: MessageConfiguration
-): TabExecutor {
+) : TabExecutor {
 
     val pluginNameLowercase = residenceBridge.pluginNameLowercase
     val mainPermission = "${residenceBridge.pluginNameLowercase}.command"
@@ -44,50 +44,53 @@ class DynamicTabExecutor(
             // help 命令
             if (!permissionMessage(sender, "$mainPermission.help")) return false
             executeHelp(sender)
-        }
-        else if (argumentsSize == 1) {
+        } else if (argumentsSize == 1) {
             when (arguments[0].lowercase()) {
                 "help" -> {
                     if (!permissionMessage(sender, "$mainPermission.help")) return false
                     executeHelp(sender)
                 }
+
                 "list" -> {
                     if (!permissionMessage(sender, "$mainPermission.list")) return false
                     executeList(sender)
                 }
+
                 "listall" -> {
                     if (!permissionMessage(sender, "$mainPermission.listall")) return false
                     executeListAll(sender)
                 }
+
                 "import" -> {
                     if (!permissionMessage(sender, "$mainPermission.import")) return false
                     executeImportResidence(sender)
                 }
+
                 "reload" -> {
                     if (!permissionMessage(sender, "$mainPermission.reload")) return false
                     executeReloadMessages(sender)
                 }
             }
-        }
-        else if (argumentsSize == 2) {
+        } else if (argumentsSize == 2) {
             when (arguments[0].lowercase()) {
                 "list" -> {
                     if (!permissionMessage(sender, "$mainPermission.list")) return false
                     val targetName = arguments[1]
                     executeList(sender, targetName)
                 }
+
                 "listall" -> {
                     if (!permissionMessage(sender, "$mainPermission.listall")) return false
                     val page = arguments[1].toIntOrNull() ?: return false
                     executeListAll(sender, page)
                 }
+
                 "teleport" -> {
                     if (!permissionMessage(sender, "$mainPermission.teleport")) return false
-                    executeTeleport(sender,arguments[1])
+                    executeTeleport(sender, arguments[1])
                 }
             }
-        }
-        else if (argumentsSize == 3) {
+        } else if (argumentsSize == 3) {
             when (arguments[0].lowercase()) {
                 "list" -> {
                     if (!permissionMessage(sender, "$mainPermission.list")) return false
@@ -99,7 +102,7 @@ class DynamicTabExecutor(
 
                 "teleport" -> {
                     if (!permissionMessage(sender, "$mainPermission.teleport")) return false
-                    executeTeleport(sender, arguments[1],arguments[2])
+                    executeTeleport(sender, arguments[1], arguments[2])
                 }
             }
         }
@@ -110,27 +113,28 @@ class DynamicTabExecutor(
         val argumentsSize = arguments.size
         if (argumentsSize == 1) {
             return prune(arguments[0], listOf("help", "teleport", "import", "list", "listall", "reload"))
-        }
-        else if (argumentsSize == 2) {
+        } else if (argumentsSize == 2) {
             when (arguments[0].lowercase()) {
                 "list" -> {
                     val argument = arguments[1]
                     return prune(argument, allCache.fetchPlayersByName().keys)
                 }
+
                 "listall" -> {
                     return listOf("[page]")
                 }
+
                 "teleport" -> {
                     val argument = arguments[1]
                     return prune(argument, allCache.fetchResidencesByName().keys)
                 }
             }
-        }
-        else if (argumentsSize == 3) {
+        } else if (argumentsSize == 3) {
             when (arguments[0].lowercase()) {
                 "list" -> {
                     return listOf("[page]")
                 }
+
                 "teleport" -> {
                     val argument = arguments[2]
                     val empty = argument.isEmpty()
@@ -263,8 +267,6 @@ class DynamicTabExecutor(
             simpleMessage.sendMessage(sender, s, Placeholder.unparsed("error", e.message ?: "error"))
         }
     }
-
-
 
 
     fun executeList(sender: CommandSender, targetName: String? = null, page: Int = 1, pageSize: Int = 10) {
@@ -491,15 +493,12 @@ class DynamicTabExecutor(
                     simpleMessage.sendMessage(audience, s, tagResolver)
 
                 } else {
-                    val s= messageConfiguration.message.noPermission
+                    val s = messageConfiguration.message.noPermission
                     simpleMessage.sendMessage(audience, s)
                 }
             }
         }
     }
-
-
-
 
 
 }

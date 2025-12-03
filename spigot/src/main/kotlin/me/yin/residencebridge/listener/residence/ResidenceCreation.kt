@@ -5,13 +5,12 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import me.yin.residencebridge.ResidenceBridge
 import me.yin.residencebridge.configuration.MainConfiguration
+import me.yin.residencebridge.other.AllCache
 import me.yin.residencebridge.other.AllRepository
 import me.yin.residencebridge.other.DatabaseManager
-import me.yin.residencebridge.other.AllCache
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import java.util.*
-import kotlin.collections.set
 
 class ResidenceCreation(
     val residenceBridge: ResidenceBridge,
@@ -33,13 +32,15 @@ class ResidenceCreation(
 
         // 阻塞
         // 防 residence 弱智行为
-        databaseManager.dataSource.connection.use { connection ->
-            if (allRepository.selectResidenceName(connection, residenceName)) {
-                event.isCancelled = true
-                residenceBridge.logger.info("命令没拦截的领地 $residenceName 玩家 ${residence.owner} 尝试创建，为了保证不重名强行阻止")
-                return
-            }
-        }
+        // 暂时取消，防止阻塞
+        // 但是有未知行为
+//        databaseManager.dataSource.connection.use { connection ->
+//            if (allRepository.selectResidenceName(connection, residenceName)) {
+//                event.isCancelled = true
+//                residenceBridge.logger.info("命令没拦截的领地 $residenceName 玩家 ${residence.owner} 尝试创建，为了保证不重名强行阻止")
+//                return
+//            }
+//        }
 
 
         val ownerUuid = residence.ownerUUID

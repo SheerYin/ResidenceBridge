@@ -458,14 +458,14 @@ class AllRepository(
         override val residenceFlags: Map<String, Boolean>,
         override val playerFlags: Map<@Contextual UUID, Map<String, Boolean>>,
         override val serverName: String
-    ): IReadOnlyResidence
+    ) : IReadOnlyResidence
 
     @Serializable
     class Player(
         @Contextual
         override val uuid: UUID,
         override var name: String
-    ): IReadOnlyPlayer
+    ) : IReadOnlyPlayer
 
     @Serializable
     data class ResidenceDetail(

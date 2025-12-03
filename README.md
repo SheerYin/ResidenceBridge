@@ -15,7 +15,8 @@
 5. bungeecord/waterfall/velocity 放入对应插件，需要开启端口转发，velocity 也一样
 
 与 Residence 某些功能严重冲突:
-- 放下箱子自动创建领地，此功能会无视命名冲突强行放置领地，导致数据库出现重名领地。如果阻止就会带来大量检查开销 - Residence 的 config.yml 的 NewPlayer.Use: true
+- 放下箱子自动创建领地，此功能会无视命名冲突强行放置领地，导致数据库出现重名领地。如果阻止就会带来大量检查开销
+- Residence 的 config.yml 的 NewPlayer.Use: true -> false
 
 
 命令：
